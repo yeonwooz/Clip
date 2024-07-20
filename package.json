@@ -9,16 +9,21 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@tanstack/query-core": "^5.51.9",
+    "@tanstack/react-query-devtools": "^5.51.9",
+    "jotai": "^2.9.0",
+    "jotai-tanstack-query": "^0.8.5",
+    "next": "14.2.5",
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.2.5"
+    "wonka": "^6.3.4"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
-    "eslint-config-next": "14.2.5"
+    "eslint-config-next": "14.2.5",
+    "typescript": "^5"
   }
 }
