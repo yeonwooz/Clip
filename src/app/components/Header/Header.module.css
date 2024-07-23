@@ -3,10 +3,7 @@
     justify-content: space-between;
     align-items: center;
     height: 44px;
-}
-
-.iconButton {
-    color: #000;
+    padding: 0 10px;
 }
 
 .title {

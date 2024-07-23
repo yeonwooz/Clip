@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 export default function AppLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const [showHeader, setShowHeader] = useState(false);
+    const [showBackButton, setShowBackButton] = useState(false);
 
     useEffect(() => {
         if (pathname === '/') {
@@ -14,10 +15,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         } else {
             setShowHeader(true);
         }
+        // TODO: setShowBackButton
     }, [pathname]);
+
     return (
         <>
-            {showHeader && <Header />}
+            {showHeader && <Header showBackButton={showBackButton} />}
             {React.cloneElement(children as React.ReactElement, { setShowHeader })}
         </>
     );
