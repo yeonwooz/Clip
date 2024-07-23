@@ -9,13 +9,18 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.13.0",
+    "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^5.16.4",
     "@tanstack/query-core": "^5.51.9",
     "@tanstack/react-query-devtools": "^5.51.9",
+    "@types/styled-components": "^5.1.34",
     "jotai": "^2.9.0",
     "jotai-tanstack-query": "^0.8.5",
     "next": "14.2.5",
     "react": "^18",
     "react-dom": "^18",
+    "styled-components": "^6.1.12",
     "wonka": "^6.3.4"
   },
   "devDependencies": {

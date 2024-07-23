@@ -1,0 +1,15 @@
+.headerContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 44px;
+}
+
+.iconButton {
+    color: #000;
+}
+
+.title {
+    text-align: center;
+    flex-grow: 1;
+}

@@ -1,25 +1,28 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import { Providers } from "./providers";
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
+import { Providers } from './providers';
+import AppLayout from './components/AppLayout';
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "Clip",
-  description: "네이버클라우드AI가 추천해주는 여행 추천 어플",
+    title: 'Clip',
+    description: '네이버클라우드AI가 추천해주는 여행 추천 어플',
 };
 
 export default function RootLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
-  return (
-    <html lang="ko">
-      <body className={inter.className}>
-        <Providers>{children}</Providers>
-      </body>
-    </html>
-  );
+    return (
+        <html lang='ko'>
+            <body className={inter.className}>
+                <Providers>
+                    <AppLayout>{children}</AppLayout>
+                </Providers>
+            </body>
+        </html>
+    );
 }
