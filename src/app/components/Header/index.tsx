@@ -23,9 +23,11 @@ export default function Header({ showBackButton }: HeaderProps) {
             <Link href='/'>
                 <span className={styles.title}>CLIP</span>
             </Link>
-            <span aria-label='calendar_button'>
-                <Image src='/icons/Calendar.svg' alt='calendar' width={20} height={20} />
-            </span>
+            <Link href='/schedule'>
+                <span aria-label='calendar_button'>
+                    <Image src='/icons/Calendar.svg' alt='calendar' width={20} height={20} />
+                </span>
+            </Link>
         </div>
     );
 }
