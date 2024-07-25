@@ -11,7 +11,7 @@ export const useFetchSchedule = () => {
         setLoading(true);
         setError(null);
         try {
-            const data = await fetchData('/path-to-endpoint');
+            const data = await fetchData('/schedule');
             setSchedule(data);
         } catch (error) {
             setError(error);

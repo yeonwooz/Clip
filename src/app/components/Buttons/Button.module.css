@@ -1,0 +1,24 @@
+/* src/app/components/Button.module.css */
+.cancelButton {
+    background: #ffffff;
+    color: #54576f;
+    border: 1px solid #d7d9f6;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    height: 56px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.okButton {
+    background: #ee4865;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    height: 56px;
+    text-align: center;
+    font-weight: bold;
+}

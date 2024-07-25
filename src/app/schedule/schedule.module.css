@@ -1,0 +1,30 @@
+.container {
+    padding: 20px;
+}
+
+.scheduleGrid {
+    display: flex;
+    justify-content: space-between;
+}
+
+.scheduleDay {
+    width: 45%;
+}
+
+.scheduleItem {
+    background: #f0f0f0;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 5px;
+    user-select: none;
+}
+
+.buttonGroup {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.buttonGap {
+    width: 10px;
+}
