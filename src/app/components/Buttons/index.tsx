@@ -7,7 +7,7 @@ interface ButtonProps {
     type: 'cancel' | 'ok';
 }
 
-const Button: React.FC<ButtonProps> = ({ children, onClick, type }) => {
+const Button: React.FC<ButtonProps> = ({ type, onClick, children }) => {
     return (
         <button className={type === 'cancel' ? styles.cancelButton : styles.okButton} onClick={onClick}>
             {children}

@@ -5,4 +5,12 @@
     align-items: center;
     padding: 15px;
     height: 100vh;
+
+    .logo {
+        margin-bottom: 100px;
+    }
+
+    .buttonWrapper {
+        width: 100%;
+    }
 }
