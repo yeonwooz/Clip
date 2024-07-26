@@ -87,9 +87,9 @@
     user-select: none;
     margin-bottom: 20px;
     text-wrap: wrap;
-    height: 60px;
+    height: 50px;
     overflow: hidden;
-    z-index: 0; /* 기본 z-index 설정 */
+    z-index: 999; /* 기본 z-index 설정 */
 }
 
 .scheduleItem.dragging {
@@ -97,6 +97,17 @@
 }
 
 .hiddenItem {
+    position: absolute;
+    background: #ebecfb;
+    padding: 10px;
+    border-radius: 5px;
+    user-select: none;
+    margin-bottom: 20px;
+    text-wrap: wrap;
+    height: 50px;
+    overflow: hidden;
+    z-index: -1; /* 기본 z-index 설정 */
+    width: 100%;
     visibility: hidden;
 }
 
