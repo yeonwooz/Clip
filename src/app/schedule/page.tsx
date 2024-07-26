@@ -45,6 +45,19 @@ const SchedulePage: React.FC = () => {
         return time.slice(0, 2) + ':' + time.slice(2);
     };
 
+    // 요일 배열
+    const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
+
+    // 날짜 형식을 변경하는 함수
+    const formatDate = (dateString) => {
+        const year = dateString.slice(0, 4);
+        const month = dateString.slice(4, 6);
+        const day = dateString.slice(6, 8);
+        const date = new Date(`${year}-${month}-${day}`);
+        const dayOfWeek = daysOfWeek[date.getDay()];
+        return `${month}.${day}. ${dayOfWeek}요일`;
+    };
+
     // if (loading) {
     //     return <p>로딩 중...</p>;
     // }
@@ -52,49 +65,95 @@ const SchedulePage: React.FC = () => {
     //     return <p>에러 발생: {error?.message}</p>;
     // }
 
+    const getTimeSlots = () => {
+        const timeSlots = [];
+        for (let i = 0; i < 24; i++) {
+            timeSlots.push(`${i.toString().padStart(2, '0')}:00`);
+        }
+        return timeSlots;
+    };
+
+    const calculatePosition = (startTime, endTime) => {
+        const start = parseInt(startTime.slice(0, 2)) + parseInt(startTime.slice(2)) / 60;
+        const end = parseInt(endTime.slice(0, 2)) + parseInt(endTime.slice(2)) / 60;
+        return {
+            top: `${start * 60}px`,
+            height: `${(end - start) * 60}px`,
+        };
+    };
+
     return (
         <div className={styles.container}>
-            <h1>부산여행</h1>
-            <DragDropContext onDragEnd={onDragEnd}>
-                <div className={styles.scheduleGrid}>
-                    {data.map((daySchedule, index) => (
-                        <Droppable droppableId={`${index}`} key={index}>
-                            {(provided) => (
-                                <div
-                                    className={styles.scheduleDay}
-                                    {...provided.droppableProps}
-                                    ref={provided.innerRef}
-                                >
-                                    <h2>{daySchedule.date}</h2>
-                                    {daySchedule.items.map((item, idx) => (
-                                        <Draggable key={item.title} draggableId={item.title} index={idx}>
-                                            {(provided) => (
-                                                <div
-                                                    className={styles.scheduleItem}
-                                                    ref={provided.innerRef}
-                                                    {...provided.draggableProps}
-                                                    {...provided.dragHandleProps}
-                                                >
-                                                    <p>
-                                                        <strong>{item.title}</strong>
-                                                    </p>
-                                                    <p>
-                                                        시간: {formatTime(item.startTime)} - {formatTime(item.endTime)}
-                                                    </p>
-                                                    {/* <p>{item.description}</p> */}
-                                                    {/*  상세페이지에서 보여줄 예정 */}
-                                                    <p>주소: {item.address}</p>
+            <div className={styles.contents}>
+                <h1>부산여행</h1>
+                <div className={styles.scheduleGridContainer}>
+                    <div className={styles.timeLabels}>
+                        {getTimeSlots().map((timeSlot, idx) => (
+                            <div className={styles.timeLabel} key={idx}>
+                                {timeSlot}
+                            </div>
+                        ))}
+                    </div>
+                    <DragDropContext onDragEnd={onDragEnd}>
+                        <div className={styles.scheduleGrid}>
+                            {data.map((daySchedule, index) => (
+                                <Droppable droppableId={`${index}`} key={index} direction='horizontal'>
+                                    {(provided) => (
+                                        <div
+                                            className={styles.scheduleDay}
+                                            {...provided.droppableProps}
+                                            ref={provided.innerRef}
+                                        >
+                                            <div className={styles.dateTextContainer}>
+                                                <div className={styles.dateText}>{formatDate(daySchedule.date)}</div>
+                                            </div>
+                                            {getTimeSlots().map((timeSlot, timeIdx) => (
+                                                <div className={styles.timeSlotContainer} key={timeIdx}>
+                                                    <div className={styles.itemsContainer}>
+                                                        {daySchedule.items
+                                                            .filter((item) =>
+                                                                item.startTime.startsWith(timeSlot.slice(0, 2)),
+                                                            )
+                                                            .map((item, itemIdx) => (
+                                                                <Draggable
+                                                                    key={item.title}
+                                                                    draggableId={item.title}
+                                                                    index={itemIdx}
+                                                                >
+                                                                    {(provided) => (
+                                                                        <div
+                                                                            className={styles.scheduleItem}
+                                                                            ref={provided.innerRef}
+                                                                            {...provided.draggableProps}
+                                                                            {...provided.dragHandleProps}
+                                                                            style={{
+                                                                                ...provided.draggableProps.style,
+                                                                            }}
+                                                                        >
+                                                                            <p>
+                                                                                <strong>{item.title}</strong>
+                                                                            </p>
+                                                                            <p>
+                                                                                시간: {formatTime(item.startTime)} -{' '}
+                                                                                {formatTime(item.endTime)}
+                                                                            </p>
+                                                                            <p>주소: {item.address}</p>
+                                                                        </div>
+                                                                    )}
+                                                                </Draggable>
+                                                            ))}
+                                                    </div>
                                                 </div>
-                                            )}
-                                        </Draggable>
-                                    ))}
-                                    {provided.placeholder}
-                                </div>
-                            )}
-                        </Droppable>
-                    ))}
+                                            ))}
+                                            {provided.placeholder}
+                                        </div>
+                                    )}
+                                </Droppable>
+                            ))}
+                        </div>
+                    </DragDropContext>
                 </div>
-            </DragDropContext>
+            </div>
             <div className={styles.buttonGroup}>
                 <Button type='cancel' onClick={() => console.log('취소 버튼 클릭됨')}>
                     취소
@@ -103,7 +162,6 @@ const SchedulePage: React.FC = () => {
                 <Button type='ok' onClick={() => console.log('저장 버튼 클릭됨')}>
                     저장
                 </Button>
-                {/* // TODO:저장 누르면 로컬스토리지에 저장 */}
             </div>
         </div>
     );

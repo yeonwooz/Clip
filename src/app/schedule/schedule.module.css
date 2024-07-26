@@ -1,28 +1,84 @@
 .container {
     padding: 20px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.contents {
+    flex: 11; /* contents가 남은 공간을 채우도록 설정 */
+    overflow-y: auto; /* 스크롤이 가능하도록 설정 */
+    margin-bottom: 20px;
+}
+
+.scheduleGridContainer {
+    display: flex;
+    padding-bottom: 10px;
+}
+
+.timeLabels {
+    position: relative;
+    margin-top: 70px;
+    width: 50px;
+    text-align: right;
+    padding-right: 10px;
+    box-sizing: border-box;
+    background: white; /* 백그라운드 색상을 설정하여 시간 라벨이 스크롤 시에도 보이도록 */
+}
+
+.timeLabel {
+    height: 60px; /* 1시간 간격을 60px로 설정 */
+    display: flex;
+    align-items: center;
 }
 
 .scheduleGrid {
     display: flex;
-    justify-content: space-between;
+    overflow-x: auto;
+    padding-left: 2px;
+    padding-bottom: 2px;
+    white-space: nowrap; /* 스크롤이 가능한 가로 배치 */
 }
 
 .scheduleDay {
-    width: 45%;
+    width: 45%; /* 날짜 아이템의 너비를 적절히 설정 */
+    flex-shrink: 0; /* 날짜 아이템이 줄어들지 않도록 설정 */
+    margin-right: 10px; /* 날짜 아이템 사이의 간격 설정 */
+    padding: 10px;
+    position: relative;
+    height: 1440px; /* 24시간을 기준으로 높이를 설정 */
 }
 
 .scheduleItem {
-    background: #f0f0f0;
-    margin: 10px 0;
+    position: relative;
+    background: #ebecfb;
     padding: 10px;
     border-radius: 5px;
     user-select: none;
+    margin-bottom: 20px;
+    overflow: auto;
+    text-wrap: wrap;
+}
+
+.dateTextContainer {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.dateText {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    text-align: center;
+    width: 40px;
+    text-wrap: wrap;
 }
 
 .buttonGroup {
     display: flex;
     justify-content: space-between;
-    margin-top: 20px;
+    flex: 1;
 }
 
 .buttonGap {

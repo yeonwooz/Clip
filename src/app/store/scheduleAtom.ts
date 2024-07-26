@@ -56,6 +56,18 @@ export const scheduleAtom = atom<Schedule[]>([
             },
         ],
     },
+    {
+        date: '20240803',
+        items: [
+            {
+                title: 'ㅇㅇㅇ',
+                startTime: '1000',
+                endTime: '1300',
+                description: 'ㅁㅁㅁㅁㅁ',
+                address: '',
+            },
+        ],
+    },
 ]);
 
 export const scheduleLoadingAtom = atom<boolean>(false);
