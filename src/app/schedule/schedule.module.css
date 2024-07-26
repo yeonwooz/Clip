@@ -80,7 +80,7 @@
 }
 
 .scheduleItem {
-    position: absolute;
+    position: relative;
     background: #ebecfb;
     padding: 10px;
     border-radius: 5px;
@@ -89,15 +89,11 @@
     text-wrap: wrap;
     height: 50px;
     overflow: hidden;
-    z-index: 999; /* 기본 z-index 설정 */
-}
-
-.scheduleItem.dragging {
-    z-index: 1000; /* 드래그 중 z-index 설정 */
+    z-index: 1000;
 }
 
 .hiddenItem {
-    position: absolute;
+    position: relative;
     background: #ebecfb;
     padding: 10px;
     border-radius: 5px;

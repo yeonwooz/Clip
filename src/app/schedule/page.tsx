@@ -135,15 +135,16 @@ const SchedulePage: React.FC = () => {
                                                                 <div
                                                                     className={`${styles.scheduleItem} ${
                                                                         item.isDummy ? styles.hiddenItem : ''
-                                                                    } ${snapshot.isDragging ? styles.dragging : ''}`}
+                                                                    }`}
                                                                     ref={provided.innerRef}
                                                                     {...provided.draggableProps}
                                                                     {...provided.dragHandleProps}
                                                                     style={{
                                                                         ...provided.draggableProps.style,
                                                                         top: topPosition,
+                                                                        left: '0px', // 좌표를 조정해서 드래그 위치 문제 해결
                                                                         position: 'absolute',
-                                                                        zIndex: snapshot.isDragging ? 1000 : 'auto', // zIndex 설정
+                                                                        zIndex: snapshot.isDragging ? 1000 : 'auto',
                                                                     }}
                                                                 >
                                                                     {!item.isDummy && (
