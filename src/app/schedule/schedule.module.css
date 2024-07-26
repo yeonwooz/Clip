@@ -96,6 +96,10 @@
     font-size: 14px;
 }
 
+.dragHandle {
+    cursor: grab; /* 드래그 핸들로 인식되도록 설정 */
+}
+
 .hiddenItem {
     position: relative;
     background: #ebecfb;
@@ -128,6 +132,8 @@
 
 .buttonGroup {
     display: flex;
+    justify-content: space-between;
+    padding-top: 20px;
 }
 
 .buttonGap {

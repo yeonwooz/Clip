@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useAtom } from 'jotai';
 import { scheduleAtom, scheduleLoadingAtom, scheduleErrorAtom } from '../store/scheduleAtom';
 import { useFetchSchedule } from '../store/scheduleActions';
@@ -13,9 +14,26 @@ const SchedulePage: React.FC = () => {
     const [error] = useAtom(scheduleErrorAtom);
     const fetchSchedule = useFetchSchedule();
 
-    // useEffect(() => {
-    //     fetchSchedule();
-    // }, []);
+    const [dataWithDummyItems, setDataWithDummyItems] = useState([]);
+
+    useEffect(() => {
+        const addDummyItems = (daySchedule) => {
+            const timeSlots = getTimeSlots();
+            const existingTimes = daySchedule.items.map((item) => item.startTime.slice(0, 2) + ':00');
+            const dummyItems = timeSlots
+                .filter((timeSlot) => !existingTimes.includes(timeSlot))
+                .map((timeSlot, index) => ({
+                    title: `빈 시간 ${index}`,
+                    startTime: timeSlot.replace(':', '') + '00',
+                    endTime: timeSlot.replace(':', '') + '59',
+                    address: '',
+                    isDummy: true, // 더미 아이템임을 표시
+                }));
+            return { ...daySchedule, items: [...daySchedule.items, ...dummyItems] };
+        };
+
+        setDataWithDummyItems(data.map((daySchedule) => addDummyItems(daySchedule)));
+    }, [data]);
 
     const onDragEnd = (result: DropResult) => {
         if (!result.destination) return;
@@ -28,8 +46,8 @@ const SchedulePage: React.FC = () => {
         const sourceIndex = source.index;
         const destIndex = destination.index;
 
-        const sourceDay = { ...data[sourceDayIndex] };
-        const destDay = { ...data[destDayIndex] };
+        const sourceDay = { ...dataWithDummyItems[sourceDayIndex] };
+        const destDay = { ...dataWithDummyItems[destDayIndex] };
 
         const [movedItem] = sourceDay.items.splice(sourceIndex, 1);
 
@@ -38,11 +56,11 @@ const SchedulePage: React.FC = () => {
 
         destDay.items.splice(destIndex, 0, movedItem);
 
-        const newData = [...data];
+        const newData = [...dataWithDummyItems];
         newData[sourceDayIndex] = sourceDay;
         newData[destDayIndex] = destDay;
 
-        setData(newData);
+        setDataWithDummyItems(newData);
     };
 
     const calculateNewStartTime = (index: number) => {
@@ -75,23 +93,6 @@ const SchedulePage: React.FC = () => {
         return timeSlots;
     };
 
-    const addDummyItems = (daySchedule) => {
-        const timeSlots = getTimeSlots();
-        const existingTimes = daySchedule.items.map((item) => item.startTime.slice(0, 2) + ':00');
-        const dummyItems = timeSlots
-            .filter((timeSlot) => !existingTimes.includes(timeSlot))
-            .map((timeSlot, index) => ({
-                title: `빈 시간 ${index}`,
-                startTime: timeSlot.replace(':', '') + '00',
-                endTime: timeSlot.replace(':', '') + '59',
-                address: '',
-                isDummy: true, // 더미 아이템임을 표시
-            }));
-        return { ...daySchedule, items: [...daySchedule.items, ...dummyItems] };
-    };
-
-    const dataWithDummyItems = data.map((daySchedule) => addDummyItems(daySchedule));
-
     return (
         <div className={styles.container}>
             <div className={styles.contents}>
@@ -111,7 +112,7 @@ const SchedulePage: React.FC = () => {
                             <div className={styles.scheduleGrid}>
                                 {dataWithDummyItems.map((daySchedule, dayIndex) => (
                                     <Droppable droppableId={`${dayIndex}`} key={dayIndex} type='ITEM'>
-                                        {(provided) => (
+                                        {(provided, snapshot) => (
                                             <div
                                                 className={styles.scheduleDay}
                                                 {...provided.droppableProps}
@@ -142,16 +143,25 @@ const SchedulePage: React.FC = () => {
                                                                     style={{
                                                                         ...provided.draggableProps.style,
                                                                         top: topPosition,
-                                                                        left: '0px', // 좌표를 조정해서 드래그 위치 문제 해결
+                                                                        left: '0px',
                                                                         position: 'absolute',
                                                                         zIndex: snapshot.isDragging ? 1000 : 'auto',
+                                                                        visibility:
+                                                                            snapshot.isDragging || !item.isDummy
+                                                                                ? 'visible'
+                                                                                : 'hidden',
                                                                     }}
                                                                 >
-                                                                    {!item.isDummy && (
-                                                                        <p>
-                                                                            <strong>{item.title}</strong>
-                                                                        </p>
-                                                                    )}
+                                                                    <div
+                                                                        {...provided.dragHandleProps}
+                                                                        className={styles.dragHandle}
+                                                                    >
+                                                                        {!item.isDummy && (
+                                                                            <p>
+                                                                                <strong>{item.title}</strong>
+                                                                            </p>
+                                                                        )}
+                                                                    </div>
                                                                 </div>
                                                             )}
                                                         </Draggable>
