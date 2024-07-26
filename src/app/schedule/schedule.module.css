@@ -92,7 +92,7 @@
 }
 
 .hiddenItem {
-    visibility: hidden;
+    /* visibility: hidden; */
 }
 
 .dateTextContainer {

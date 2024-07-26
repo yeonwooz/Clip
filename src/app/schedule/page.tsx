@@ -4,7 +4,7 @@ import { useAtom } from 'jotai';
 import { scheduleAtom, scheduleLoadingAtom, scheduleErrorAtom } from '../store/scheduleAtom';
 import { useFetchSchedule } from '../store/scheduleActions';
 import styles from './schedule.module.css';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import Button from '@/components/Buttons';
 
 const SchedulePage: React.FC = () => {
@@ -17,28 +17,38 @@ const SchedulePage: React.FC = () => {
     //     // fetchSchedule();
     // }, []);
 
-    const onDragEnd = (result) => {
+    const onDragEnd = (result: DropResult) => {
         if (!result.destination) return;
 
         const { source, destination } = result;
 
-        const sourceDayIndex = parseInt(source.droppableId.split('-')[0]);
-        const destDayIndex = parseInt(destination.droppableId.split('-')[0]);
+        const sourceDayIndex = parseInt(source.droppableId);
+        const destDayIndex = parseInt(destination.droppableId);
 
         const sourceIndex = source.index;
         const destIndex = destination.index;
 
-        const sourceDay = data[sourceDayIndex];
-        const destDay = data[destDayIndex];
+        const sourceDay = { ...data[sourceDayIndex] };
+        const destDay = { ...data[destDayIndex] };
 
         const [movedItem] = sourceDay.items.splice(sourceIndex, 1);
+
+        // 새로운 위치에 따라 startTime 업데이트
+        const newStartTime = calculateNewStartTime(destination.index);
+        movedItem.startTime = newStartTime;
+
         destDay.items.splice(destIndex, 0, movedItem);
 
-        const newData = Array.from(data);
+        const newData = [...data];
         newData[sourceDayIndex] = sourceDay;
         newData[destDayIndex] = destDay;
 
         setData(newData);
+    };
+
+    const calculateNewStartTime = (index: number) => {
+        const hours = String(index).padStart(2, '0');
+        return `${hours}0000`;
     };
 
     const formatTime = (time: string) => {
@@ -57,13 +67,6 @@ const SchedulePage: React.FC = () => {
         const dayOfWeek = daysOfWeek[date.getDay()];
         return `${month}.${day}. ${dayOfWeek}요일`;
     };
-
-    // if (loading) {
-    //     return <p>로딩 중...</p>;
-    // }
-    // if (error) {
-    //     return <p>에러 발생: {error?.message}</p>;
-    // }
 
     const getTimeSlots = () => {
         const timeSlots = [];
@@ -90,6 +93,13 @@ const SchedulePage: React.FC = () => {
 
     const dataWithDummyItems = data.map((daySchedule) => addDummyItems(daySchedule));
 
+    // if (loading) {
+    //     return <p>로딩 중...</p>;
+    // }
+    // if (error) {
+    //     return <p>에러 발생: {error?.message}</p>;
+    // }
+
     return (
         <div className={styles.container}>
             <div className={styles.contents}>
@@ -107,7 +117,7 @@ const SchedulePage: React.FC = () => {
                         </div>
                         <DragDropContext onDragEnd={onDragEnd}>
                             <div className={styles.scheduleGrid}>
-                                {dataWithDummyItems.map((daySchedule, dayIndex) => (
+                                {data.map((daySchedule, dayIndex) => (
                                     <Droppable droppableId={`${dayIndex}`} key={dayIndex} type='ITEM'>
                                         {(provided) => (
                                             <div
@@ -120,37 +130,40 @@ const SchedulePage: React.FC = () => {
                                                         {formatDate(daySchedule.date)}
                                                     </div>
                                                 </div>
-                                                {daySchedule.items.map((item, itemIdx) => (
-                                                    <Draggable
-                                                        key={`${dayIndex}-${item.title}-${item.startTime}`}
-                                                        draggableId={`${dayIndex}-${item.title}-${item.startTime}`}
-                                                        index={itemIdx}
-                                                    >
-                                                        {(provided) => (
-                                                            <div
-                                                                className={`${styles.scheduleItem} ${
-                                                                    item.isDummy ? styles.hiddenItem : ''
-                                                                }`}
-                                                                ref={provided.innerRef}
-                                                                {...provided.draggableProps}
-                                                                {...provided.dragHandleProps}
-                                                            >
-                                                                {!item.isDummy && (
-                                                                    <>
-                                                                        <p>
-                                                                            <strong>{item.title}</strong>
-                                                                        </p>
-                                                                        <p>
-                                                                            시간: {formatTime(item.startTime)} -{' '}
-                                                                            {formatTime(item.endTime)}
-                                                                        </p>
-                                                                        {item.address && <p>주소: {item.address}</p>}
-                                                                    </>
-                                                                )}
-                                                            </div>
-                                                        )}
-                                                    </Draggable>
-                                                ))}
+                                                {daySchedule.items.map((item, itemIdx) => {
+                                                    const topPosition =
+                                                        parseInt(item.startTime.slice(0, 2)) * 60 + 'px';
+                                                    return (
+                                                        <Draggable
+                                                            key={`${dayIndex}-${item.title}-${item.startTime}`}
+                                                            draggableId={`${dayIndex}-${item.title}-${item.startTime}`}
+                                                            index={itemIdx}
+                                                        >
+                                                            {(provided) => (
+                                                                <div
+                                                                    className={styles.scheduleItem}
+                                                                    ref={provided.innerRef}
+                                                                    {...provided.draggableProps}
+                                                                    {...provided.dragHandleProps}
+                                                                    style={{
+                                                                        ...provided.draggableProps.style,
+                                                                        top: topPosition,
+                                                                        position: 'absolute',
+                                                                    }}
+                                                                >
+                                                                    <p>
+                                                                        <strong>{item.title}</strong>
+                                                                    </p>
+                                                                    <p>
+                                                                        시간: {formatTime(item.startTime)} -{' '}
+                                                                        {formatTime(item.endTime)}
+                                                                    </p>
+                                                                    {item.address && <p>주소: {item.address}</p>}
+                                                                </div>
+                                                            )}
+                                                        </Draggable>
+                                                    );
+                                                })}
                                                 {provided.placeholder}
                                             </div>
                                         )}
