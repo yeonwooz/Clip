@@ -71,12 +71,15 @@
 }
 
 .scheduleDay {
-    width: 45%; /* 날짜 아이템의 너비를 적절히 설정 */
+    width: 100%; /* 날짜 아이템의 너비를 적절히 설정 */
     flex-shrink: 0; /* 날짜 아이템이 줄어들지 않도록 설정 */
     margin-right: 10px; /* 날짜 아이템 사이의 간격 설정 */
     padding: 10px;
     position: relative;
     height: 1440px; /* 24시간을 기준으로 높이를 설정 */
+    margin-top: 70px;
+    display: flex;
+    justify-content: center;
 }
 
 .scheduleItem {
@@ -92,13 +95,13 @@
 }
 
 .hiddenItem {
-    /* visibility: hidden; */
+    visibility: hidden;
 }
 
 .dateTextContainer {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 10px;
+    position: absolute;
+    top: -60px;
+    padding: 8px;
 }
 
 .dateText {

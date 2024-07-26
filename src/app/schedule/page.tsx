@@ -33,8 +33,7 @@ const SchedulePage: React.FC = () => {
 
         const [movedItem] = sourceDay.items.splice(sourceIndex, 1);
 
-        // 새로운 위치에 따라 startTime 업데이트
-        const newStartTime = calculateNewStartTime(destination.index);
+        const newStartTime = calculateNewStartTime(destIndex);
         movedItem.startTime = newStartTime;
 
         destDay.items.splice(destIndex, 0, movedItem);
@@ -47,7 +46,7 @@ const SchedulePage: React.FC = () => {
     };
 
     const calculateNewStartTime = (index: number) => {
-        const hours = String(index).padStart(2, '0');
+        const hours = String(Math.floor(index)).padStart(2, '0');
         return `${hours}0000`;
     };
 
@@ -117,7 +116,7 @@ const SchedulePage: React.FC = () => {
                         </div>
                         <DragDropContext onDragEnd={onDragEnd}>
                             <div className={styles.scheduleGrid}>
-                                {data.map((daySchedule, dayIndex) => (
+                                {dataWithDummyItems.map((daySchedule, dayIndex) => (
                                     <Droppable droppableId={`${dayIndex}`} key={dayIndex} type='ITEM'>
                                         {(provided) => (
                                             <div
@@ -139,9 +138,11 @@ const SchedulePage: React.FC = () => {
                                                             draggableId={`${dayIndex}-${item.title}-${item.startTime}`}
                                                             index={itemIdx}
                                                         >
-                                                            {(provided) => (
+                                                            {(provided, snapshot) => (
                                                                 <div
-                                                                    className={styles.scheduleItem}
+                                                                    className={`${styles.scheduleItem} ${
+                                                                        item.isDummy ? styles.hiddenItem : ''
+                                                                    }`}
                                                                     ref={provided.innerRef}
                                                                     {...provided.draggableProps}
                                                                     {...provided.dragHandleProps}
@@ -149,16 +150,23 @@ const SchedulePage: React.FC = () => {
                                                                         ...provided.draggableProps.style,
                                                                         top: topPosition,
                                                                         position: 'absolute',
+                                                                        ...(snapshot.isDragging && { zIndex: 1000 }),
                                                                     }}
                                                                 >
-                                                                    <p>
-                                                                        <strong>{item.title}</strong>
-                                                                    </p>
-                                                                    <p>
-                                                                        시간: {formatTime(item.startTime)} -{' '}
-                                                                        {formatTime(item.endTime)}
-                                                                    </p>
-                                                                    {item.address && <p>주소: {item.address}</p>}
+                                                                    {!item.isDummy && (
+                                                                        <>
+                                                                            <p>
+                                                                                <strong>{item.title}</strong>
+                                                                            </p>
+                                                                            <p>
+                                                                                시간: {formatTime(item.startTime)} -{' '}
+                                                                                {formatTime(item.endTime)}
+                                                                            </p>
+                                                                            {item.address && (
+                                                                                <p>주소: {item.address}</p>
+                                                                            )}
+                                                                        </>
+                                                                    )}
                                                                 </div>
                                                             )}
                                                         </Draggable>
