@@ -11,6 +11,21 @@
     margin-bottom: 20px;
 }
 
+.contents::-webkit-scrollbar {
+    width: 12px; /* 스크롤바 너비 */
+}
+
+.contents::-webkit-scrollbar-track {
+    background: #e0e0e0; /* 스크롤바 트랙 색상 */
+    border-radius: 10px; /* 스크롤바 트랙 라운드 */
+}
+
+.contents::-webkit-scrollbar-thumb {
+    background-color: #888; /* 스크롤바 색상 */
+    border-radius: 10px; /* 스크롤바 라운드 */
+    border: 3px solid #e0e0e0; /* 스크롤바와 트랙 사이의 간격 */
+}
+
 .scheduleGridContainer {
     display: flex;
     padding-bottom: 10px;
@@ -40,6 +55,21 @@
     white-space: nowrap; /* 스크롤이 가능한 가로 배치 */
 }
 
+.scheduleGrid::-webkit-scrollbar {
+    height: 12px; /* 가로 스크롤바 높이 */
+}
+
+.scheduleGrid::-webkit-scrollbar-track {
+    background: #e0e0e0; /* 가로 스크롤바 트랙 색상 */
+    border-radius: 10px; /* 가로 스크롤바 트랙 라운드 */
+}
+
+.scheduleGrid::-webkit-scrollbar-thumb {
+    background-color: #888; /* 가로 스크롤바 색상 */
+    border-radius: 10px; /* 가로 스크롤바 라운드 */
+    border: 3px solid #e0e0e0; /* 가로 스크롤바와 트랙 사이의 간격 */
+}
+
 .scheduleDay {
     width: 45%; /* 날짜 아이템의 너비를 적절히 설정 */
     flex-shrink: 0; /* 날짜 아이템이 줄어들지 않도록 설정 */
@@ -56,8 +86,9 @@
     border-radius: 5px;
     user-select: none;
     margin-bottom: 20px;
-    overflow: auto;
     text-wrap: wrap;
+    height: 60px;
+    overflow: hidden;
 }
 
 .dateTextContainer {
