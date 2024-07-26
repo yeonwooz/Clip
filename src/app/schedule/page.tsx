@@ -148,18 +148,9 @@ const SchedulePage: React.FC = () => {
                                                                     }}
                                                                 >
                                                                     {!item.isDummy && (
-                                                                        <>
-                                                                            <p>
-                                                                                <strong>{item.title}</strong>
-                                                                            </p>
-                                                                            <p>
-                                                                                시간: {formatTime(item.startTime)} -{' '}
-                                                                                {formatTime(item.endTime)}
-                                                                            </p>
-                                                                            {item.address && (
-                                                                                <p>주소: {item.address}</p>
-                                                                            )}
-                                                                        </>
+                                                                        <p>
+                                                                            <strong>{item.title}</strong>
+                                                                        </p>
                                                                     )}
                                                                 </div>
                                                             )}
