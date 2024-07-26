@@ -43,8 +43,6 @@
 
 .timeLabel {
     height: 60px; /* 1시간 간격을 60px로 설정 */
-    display: flex;
-    align-items: center;
 }
 
 .scheduleGrid {
