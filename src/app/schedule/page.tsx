@@ -14,7 +14,7 @@ const SchedulePage: React.FC = () => {
     const fetchSchedule = useFetchSchedule();
 
     // useEffect(() => {
-    //     // fetchSchedule();
+    //     fetchSchedule();
     // }, []);
 
     const onDragEnd = (result: DropResult) => {
@@ -58,7 +58,7 @@ const SchedulePage: React.FC = () => {
     const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
 
     // 날짜 형식을 변경하는 함수
-    const formatDate = (dateString) => {
+    const formatDate = (dateString: string) => {
         const year = dateString.slice(0, 4);
         const month = dateString.slice(4, 6);
         const day = dateString.slice(6, 8);
@@ -91,13 +91,6 @@ const SchedulePage: React.FC = () => {
     };
 
     const dataWithDummyItems = data.map((daySchedule) => addDummyItems(daySchedule));
-
-    // if (loading) {
-    //     return <p>로딩 중...</p>;
-    // }
-    // if (error) {
-    //     return <p>에러 발생: {error?.message}</p>;
-    // }
 
     return (
         <div className={styles.container}>
@@ -142,7 +135,7 @@ const SchedulePage: React.FC = () => {
                                                                 <div
                                                                     className={`${styles.scheduleItem} ${
                                                                         item.isDummy ? styles.hiddenItem : ''
-                                                                    }`}
+                                                                    } ${snapshot.isDragging ? styles.dragging : ''}`}
                                                                     ref={provided.innerRef}
                                                                     {...provided.draggableProps}
                                                                     {...provided.dragHandleProps}
@@ -150,7 +143,7 @@ const SchedulePage: React.FC = () => {
                                                                         ...provided.draggableProps.style,
                                                                         top: topPosition,
                                                                         position: 'absolute',
-                                                                        ...(snapshot.isDragging && { zIndex: 1000 }),
+                                                                        zIndex: snapshot.isDragging ? 1000 : 'auto', // zIndex 설정
                                                                     }}
                                                                 >
                                                                     {!item.isDummy && (

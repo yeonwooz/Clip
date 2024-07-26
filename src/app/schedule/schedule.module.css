@@ -49,7 +49,6 @@
 
 .scheduleGrid {
     display: flex;
-    /* overflow-x: auto; */
     padding-left: 2px;
     padding-bottom: 2px;
     white-space: nowrap; /* 스크롤이 가능한 가로 배치 */
@@ -71,7 +70,7 @@
 }
 
 .scheduleDay {
-    width: 100%; /* 날짜 아이템의 너비를 적절히 설정 */
+    width: 100px; /* 날짜 아이템의 너비를 적절히 설정 */
     flex-shrink: 0; /* 날짜 아이템이 줄어들지 않도록 설정 */
     margin-right: 10px; /* 날짜 아이템 사이의 간격 설정 */
     padding: 10px;
@@ -83,7 +82,7 @@
 }
 
 .scheduleItem {
-    position: relative;
+    position: absolute;
     background: #ebecfb;
     padding: 10px;
     border-radius: 5px;
@@ -92,6 +91,11 @@
     text-wrap: wrap;
     height: 60px;
     overflow: hidden;
+    z-index: 0; /* 기본 z-index 설정 */
+}
+
+.scheduleItem.dragging {
+    z-index: 1000; /* 드래그 중 z-index 설정 */
 }
 
 .hiddenItem {
