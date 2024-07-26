@@ -49,7 +49,7 @@
 
 .scheduleGrid {
     display: flex;
-    overflow-x: auto;
+    /* overflow-x: auto; */
     padding-left: 2px;
     padding-bottom: 2px;
     white-space: nowrap; /* 스크롤이 가능한 가로 배치 */
@@ -89,6 +89,10 @@
     text-wrap: wrap;
     height: 60px;
     overflow: hidden;
+}
+
+.hiddenItem {
+    visibility: hidden;
 }
 
 .dateTextContainer {
