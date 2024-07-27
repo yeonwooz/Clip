@@ -101,20 +101,35 @@ const SchedulePage: React.FC = () => {
         const destDay = { ...schedules[destDayIndex] };
 
         const movedItem = sourceDay.item[sourceIndex];
-        const targetItem = destDay.item[destIndex];
 
-        const tempStartTime = movedItem.startTime;
-        const tempEndTime = movedItem.endTime;
+        if (destIndex < destDay.item.length) {
+            // 대상 위치에 다른 아이템이 있는 경우 자리 바꿈
+            const targetItem = destDay.item[destIndex];
 
-        movedItem.startTime = targetItem.startTime;
-        movedItem.endTime = targetItem.endTime;
+            const tempStartTime = movedItem.startTime;
+            const tempEndTime = movedItem.endTime;
 
-        targetItem.startTime = tempStartTime;
-        targetItem.endTime = tempEndTime;
+            movedItem.startTime = targetItem.startTime;
+            movedItem.endTime = targetItem.endTime;
 
+            targetItem.startTime = tempStartTime;
+            targetItem.endTime = tempEndTime;
+        } else {
+            // 대상 위치에 다른 아이템이 없는 경우 해당 위치로 이동
+            movedItem.startTime = calculateNewStartTime(destIndex);
+            movedItem.endTime = calculateNewEndTime(destIndex);
+        }
+
+        // 스케줄 업데이트
         const newData = [...schedules];
-        newData[sourceDayIndex] = sourceDay;
-        newData[destDayIndex] = destDay;
+        newData[sourceDayIndex] = {
+            ...sourceDay,
+            item: sourceDay.item.filter((_, index) => index !== sourceIndex),
+        };
+        newData[destDayIndex] = {
+            ...destDay,
+            item: [...destDay.item.slice(0, destIndex), movedItem, ...destDay.item.slice(destIndex)],
+        };
 
         setSchedules(newData);
     };
@@ -122,6 +137,11 @@ const SchedulePage: React.FC = () => {
     const calculateNewStartTime = (index: number) => {
         const hours = String(index).padStart(2, '0');
         return `${hours}0000`;
+    };
+
+    const calculateNewEndTime = (index: number) => {
+        const hours = String(index).padStart(2, '0');
+        return `${hours}0059`;
     };
 
     const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
@@ -265,15 +285,14 @@ const SchedulePage: React.FC = () => {
                     </DragDropContext>
                 </div>
             </div>
+
             <div className={styles.buttonGroup}>
                 <Button
                     type='cancel'
                     onClick={() => {
                         router.back();
                     }}
-                >
-                    취소
-                </Button>
+                ></Button>
                 <span className={styles.buttonGap} />
                 <Button type='ok' onClick={() => console.log('저장 버튼 클릭됨')}>
                     저장
