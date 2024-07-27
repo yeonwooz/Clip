@@ -29,7 +29,7 @@ const SchedulePage: React.FC = () => {
     useEffect(() => {
         const addDummyItems = (daySchedule) => {
             const timeSlots = getTimeSlots();
-            const existingTimes = daySchedule.items.map((item) => item.startTime.slice(0, 2) + ':00');
+            const existingTimes = daySchedule.item.map((item) => item.startTime.slice(0, 2) + ':00');
             const dummyItems = timeSlots
                 .filter((timeSlot) => !existingTimes.includes(timeSlot))
                 .map((timeSlot, index) => ({
@@ -39,7 +39,7 @@ const SchedulePage: React.FC = () => {
                     address: '',
                     isDummy: true, // 더미 아이템임을 표시
                 }));
-            return { ...daySchedule, items: [...daySchedule.items, ...dummyItems] };
+            return { ...daySchedule, items: [...daySchedule.item, ...dummyItems] };
         };
 
         setDataWithDummyItems(data?.map((daySchedule) => addDummyItems(daySchedule)));
@@ -138,7 +138,7 @@ const SchedulePage: React.FC = () => {
                                                         {formatDate(daySchedule.date)}
                                                     </div>
                                                 </div>
-                                                {daySchedule.items.map((item, itemIdx) => {
+                                                {daySchedule.item.map((item, itemIdx) => {
                                                     const topPosition =
                                                         parseInt(item.startTime.slice(0, 2)) * 60 + 'px';
                                                     return (

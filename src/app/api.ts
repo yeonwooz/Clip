@@ -34,7 +34,7 @@ export const fetchData = async (endpoint: string) => {
 export const postData = async (endpoint: string, data: any) => {
     try {
         const response = await apiClient.post(endpoint, data);
-        return response.data;
+        return response.data.data;
     } catch (error) {
         console.error('API 호출 에러:', error);
         throw error;
