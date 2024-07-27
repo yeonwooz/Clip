@@ -5,6 +5,7 @@
     justify-content: space-between;
     background-color: #ffffff;
     overflow-y: auto;
+    padding-bottom: 60px;
 }
 
 .content {
@@ -136,11 +137,11 @@
 .buttonGroup {
     display: flex;
     justify-content: space-between;
-    padding-top: 20px;
+    padding: 0 20px;
 }
 
 .buttonGap {
-    width: 10px;
+    width: 16px;
 }
 
 .loadingPageContainer {
