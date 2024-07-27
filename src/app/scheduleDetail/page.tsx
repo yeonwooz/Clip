@@ -6,9 +6,13 @@ import React, { useEffect, useState } from 'react';
 import styles from './scheduleDetail.module.css';
 import Button from '~/components/Buttons';
 import _ from 'lodash';
+import { useAtom } from 'jotai';
+import { pageTitleAtom } from '~/store/headerAtoms';
 
 const ScheduleDetailPage: React.FC = () => {
     const router = useRouter();
+    const [pageTitle, setPageTitle] = useAtom(pageTitleAtom);
+
     const [scheduleDetail, setScheduleDetail] = useState({
         title: '',
         startTime: '',
@@ -41,6 +45,7 @@ const ScheduleDetailPage: React.FC = () => {
         if (detailInfoInLocalStorage) {
             const info = JSON.parse(detailInfoInLocalStorage);
             setScheduleDetail(info);
+            setPageTitle(info.title);
         }
 
         const minDateInLocalStorage = localStorage.getItem('minDate');

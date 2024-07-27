@@ -26,9 +26,14 @@ export default function Header({ showBackButton }: HeaderProps) {
                 </span>
             )}
 
-            <Link href='/' prefetch={true} shallow>
-                <span className={styles.title}>{pageTitle || 'CLIP'}</span>
-            </Link>
+            {pageTitle ? (
+                <span className={styles.title}>{pageTitle}</span>
+            ) : (
+                <Link href='/' prefetch={true} shallow>
+                    <span className={styles.title}>CLIP</span>
+                </Link>
+            )}
+
             <Link href='/schedule' prefetch={true} shallow>
                 <span aria-label='calendar_button'>
                     <Image src='/icons/Calendar.svg' alt='calendar' width={20} height={20} />
