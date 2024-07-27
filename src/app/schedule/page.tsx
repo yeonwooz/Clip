@@ -19,14 +19,23 @@ const SchedulePage: React.FC = () => {
     const [dataWithDummyItems, setDataWithDummyItems] = useState([]);
 
     useEffect(() => {
-        // fetchSchedule({
-        //     region: '부산',
-        //     startDate: '2024080110', // YYYYMMDDHH
-        //     endDate: '2024080310',
-        //     min: 4, // 하루 최소 일정 갯수
-        // });
-        setData(dummy);
+        fetchSchedule({
+            region: '부산',
+            startDate: '2024080210', // YYYYMMDDHH
+            endDate: '2024080310',
+            min: 4, // 하루 최소 일정 갯수
+        });
+        // setData(dummy);
     }, []);
+
+    const getTimeSlots = () => {
+        const timeSlots = [];
+        for (let i = 0; i < 24; i++) {
+            timeSlots.push(`${i.toString().padStart(2, '0')}:00`);
+        }
+        console.log(timeSlots);
+        return timeSlots;
+    };
 
     useEffect(() => {
         const addDummyItems = (daySchedule) => {
@@ -44,7 +53,7 @@ const SchedulePage: React.FC = () => {
             return { ...daySchedule, items: [...daySchedule.item, ...dummyItems] };
         };
 
-        setDataWithDummyItems(data?.map((daySchedule) => addDummyItems(daySchedule)));
+        setDataWithDummyItems(data);
     }, [data]);
 
     const onDragEnd = (result: DropResult) => {
@@ -95,14 +104,6 @@ const SchedulePage: React.FC = () => {
         const date = new Date(`${year}-${month}-${day}`);
         const dayOfWeek = daysOfWeek[date.getDay()];
         return `${month}.${day}. ${dayOfWeek}요일`;
-    };
-
-    const getTimeSlots = () => {
-        const timeSlots = [];
-        for (let i = 0; i < 24; i++) {
-            timeSlots.push(`${i.toString().padStart(2, '0')}:00`);
-        }
-        return timeSlots;
     };
 
     if (loading) {
