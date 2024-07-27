@@ -33,7 +33,6 @@ const SchedulePage: React.FC = () => {
         for (let i = 0; i < 24; i++) {
             timeSlots.push(`${i.toString().padStart(2, '0')}:00`);
         }
-        console.log(timeSlots);
         return timeSlots;
     };
 
