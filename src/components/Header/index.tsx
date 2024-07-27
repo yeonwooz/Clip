@@ -4,6 +4,7 @@ import styles from './Header.module.css';
 import Image from 'next/image';
 import { useAtom } from 'jotai';
 import { scheduleLoadingAtom } from '~/store/scheduleAtom';
+import { pageTitleAtom } from '~/store/headerAtoms';
 
 interface HeaderProps {
     showBackButton: boolean;
@@ -11,6 +12,7 @@ interface HeaderProps {
 
 export default function Header({ showBackButton }: HeaderProps) {
     const [loading] = useAtom(scheduleLoadingAtom);
+    const [pageTitle] = useAtom(pageTitleAtom);
 
     return (
         <div className={`${styles.headerContainer} ${loading ? styles.loadingSchedule : ''}`}>
@@ -25,7 +27,7 @@ export default function Header({ showBackButton }: HeaderProps) {
             )}
 
             <Link href='/' prefetch={true} shallow>
-                <span className={styles.title}>CLIP</span>
+                <span className={styles.title}>{pageTitle || 'CLIP'}</span>
             </Link>
             <Link href='/schedule' prefetch={true} shallow>
                 <span aria-label='calendar_button'>
