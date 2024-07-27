@@ -8,7 +8,7 @@ import styles from './schedule.module.css';
 import { DragDropContext, Droppable, Draggable, DropResult, DraggableProvided } from '@hello-pangea/dnd';
 import Button from '@/components/Buttons';
 import LoadingSchedule from './loading';
-import { dummy } from './dummy';
+// import { dummy } from './dummy';
 
 const SchedulePage: React.FC = () => {
     const [data, setData] = useAtom(scheduleAtom);
@@ -19,13 +19,13 @@ const SchedulePage: React.FC = () => {
     const [dataWithDummyItems, setDataWithDummyItems] = useState<Schedule[]>([]);
 
     useEffect(() => {
-        // fetchSchedule({
-        //     region: '부산',
-        //     startDate: '2024080210', // YYYYMMDDHH
-        //     endDate: '2024080310',
-        //     min: 4, // 하루 최소 일정 갯수
-        // });
-        setData(dummy);
+        fetchSchedule({
+            region: '부산',
+            startDate: '2024080210', // YYYYMMDDHH
+            endDate: '2024080310',
+            min: 4, // 하루 최소 일정 갯수
+        });
+        // setData(dummy);
     }, []);
 
     const getTimeSlots = () => {
