@@ -97,11 +97,13 @@
     align-items: center;
     font-size: 14px;
     cursor: pointer;
+    transition: margin-bottom 0.3s ease, top 0.3s ease; /* 드래그 중일 때 자연스러운 애니메이션 추가 */
 }
 
 .scheduleItem:active {
     cursor: grabbing;
 }
+
 .hiddenItem {
     position: relative;
     background: #ebecfb;
@@ -159,6 +161,7 @@
     animation: spin 2s linear infinite;
     z-index: 0;
 }
+
 .loadingText {
     color: #ffffff;
     font-size: 20px;
@@ -182,4 +185,7 @@
     100% {
         transform: rotate(360deg);
     }
+}
+
+.draggingItem {
 }

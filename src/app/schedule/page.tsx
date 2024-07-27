@@ -47,36 +47,35 @@ const SchedulePage: React.FC = () => {
                 endDate: '2024080310',
                 min: 4, // 하루 최소 일정 갯수
             });
-            setSchedules(
-                schedulesInStore.map((schedule) => ({
+            const newSchedules = schedulesInStore.map((schedule) => ({
+                ...schedule,
+                item: schedule.item.map((item) => ({
+                    ...item,
+                    startTime: item.startTime.slice(0, 2) + '0000',
+                    endTime: item.endTime.slice(0, 2) + '0059',
+                })),
+            }));
+
+            setSchedules(newSchedules);
+            localStorage.setItem('schedules', JSON.stringify(newSchedules));
+        } else {
+            const schedulesInLocalstorage = localStorage.getItem('schedules');
+            if (schedulesInLocalstorage) {
+                setSchedules(JSON.parse(schedulesInLocalstorage));
+            } else {
+                const newSchedules = dummy.map((schedule) => ({
                     ...schedule,
                     item: schedule.item.map((item) => ({
                         ...item,
                         startTime: item.startTime.slice(0, 2) + '0000',
                         endTime: item.endTime.slice(0, 2) + '0059',
                     })),
-                })),
-            );
-            localStorage.setItem('schedules', JSON.stringify(schedules));
-        } else {
-            const schedulesInLocalstorage = localStorage.getItem('schedules');
-            if (schedulesInLocalstorage) {
-                setSchedules(JSON.parse(schedulesInLocalstorage));
-            } else {
-                setSchedules(
-                    dummy.map((schedule) => ({
-                        ...schedule,
-                        item: schedule.item.map((item) => ({
-                            ...item,
-                            startTime: item.startTime.slice(0, 2) + '0000',
-                            endTime: item.endTime.slice(0, 2) + '0059',
-                        })),
-                    })),
-                );
-                localStorage.setItem('schedules', JSON.stringify(dummy));
+                }));
+                setSchedules(newSchedules);
+                localStorage.setItem('schedules', JSON.stringify(newSchedules));
             }
         }
-    }, []);
+    }, [shouldFetch, fetchSchedule, schedulesInStore, region, setPageTitle, setLeftIcon, setRightIcon]);
 
     const getTimeSlots = () => {
         const timeSlots = [];
@@ -102,36 +101,29 @@ const SchedulePage: React.FC = () => {
 
         const movedItem = sourceDay.item[sourceIndex];
 
-        if (destIndex < destDay.item.length) {
-            // 대상 위치에 다른 아이템이 있는 경우 자리 바꿈
-            const targetItem = destDay.item[destIndex];
+        // 대상 위치에 다른 아이템이 있는 경우 밀어냄
+        const newItems = Array.from(destDay.item);
+        newItems.splice(sourceIndex, 1); // 기존 위치에서 아이템 제거
+        newItems.splice(destIndex, 0, movedItem); // 새로운 위치에 아이템 추가
 
-            const tempStartTime = movedItem.startTime;
-            const tempEndTime = movedItem.endTime;
+        const newSchedules = schedules.map((schedule, idx) => {
+            if (idx === sourceDayIndex) {
+                return {
+                    ...schedule,
+                    item: schedule.item.filter((_, i) => i !== sourceIndex),
+                };
+            } else if (idx === destDayIndex) {
+                return {
+                    ...schedule,
+                    item: newItems,
+                };
+            } else {
+                return schedule;
+            }
+        });
 
-            movedItem.startTime = targetItem.startTime;
-            movedItem.endTime = targetItem.endTime;
-
-            targetItem.startTime = tempStartTime;
-            targetItem.endTime = tempEndTime;
-        } else {
-            // 대상 위치에 다른 아이템이 없는 경우 해당 위치로 이동
-            movedItem.startTime = calculateNewStartTime(destIndex);
-            movedItem.endTime = calculateNewEndTime(destIndex);
-        }
-
-        // 스케줄 업데이트
-        const newData = [...schedules];
-        newData[sourceDayIndex] = {
-            ...sourceDay,
-            item: sourceDay.item.filter((_, index) => index !== sourceIndex),
-        };
-        newData[destDayIndex] = {
-            ...destDay,
-            item: [...destDay.item.slice(0, destIndex), movedItem, ...destDay.item.slice(destIndex)],
-        };
-
-        setSchedules(newData);
+        setSchedules(newSchedules);
+        localStorage.setItem('schedules', JSON.stringify(newSchedules));
     };
 
     const calculateNewStartTime = (index: number) => {
@@ -182,7 +174,7 @@ const SchedulePage: React.FC = () => {
     const handleClickItem = (date: string, item: ScheduleItem) => {
         const daysLength = schedules.length - 1;
         const firstDate = schedules[0];
-        const lastDate = schedules[daysLength - 1];
+        const lastDate = schedules[daysLength];
         saveDateToLocalStorage(firstDate.date, firstDate.item[0].startTime, 'minDate');
         saveDateToLocalStorage(lastDate.date, lastDate.item[lastDate.item.length - 1].startTime, 'maxDate');
         saveDateToLocalStorage(date, item.startTime, 'scheduleDate');
@@ -247,7 +239,9 @@ const SchedulePage: React.FC = () => {
                                                     >
                                                         {(provided, snapshot) => (
                                                             <div
-                                                                className={styles.scheduleItem}
+                                                                className={`${styles.scheduleItem} ${
+                                                                    snapshot.isDragging ? styles.draggingItem : ''
+                                                                }`}
                                                                 ref={provided.innerRef}
                                                                 {...provided.draggableProps}
                                                                 {...provided.dragHandleProps}
@@ -261,6 +255,10 @@ const SchedulePage: React.FC = () => {
                                                                     position: 'absolute',
                                                                     zIndex: snapshot.isDragging ? 1000 : 'auto',
                                                                     cursor: 'pointer',
+                                                                    marginBottom: snapshot.isDragging ? '60px' : '20px', // 드래그 중일 때 공간 확보
+                                                                    transition: snapshot.isDragging
+                                                                        ? 'none'
+                                                                        : 'top 0.3s ease', // 드래그 중일 때 자연스러운 애니메이션 추가
                                                                 }}
                                                             >
                                                                 <div
