@@ -36,11 +36,7 @@ const ScheduleDetailPage: React.FC = () => {
     function getEndDateFromStartDate(startDateTime: string): string {
         const startDate = new Date(startDateTime);
         const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // 60분 더하기
-
-        const offset = startDate.getTimezoneOffset() * 60000; // 타임존 오프셋 계산
-        const correctedEndDate = new Date(endDate.getTime() - offset); // 타임존 보정
-
-        return correctedEndDate.toISOString().slice(0, 16);
+        return endDate.toISOString().slice(0, 16);
     }
 
     useEffect(() => {
@@ -59,9 +55,9 @@ const ScheduleDetailPage: React.FC = () => {
         const scheduleDateInLocalStorage = localStorage.getItem('scheduleDate');
 
         if (minDateInLocalStorage && maxDateInLocalStorage && scheduleDateInLocalStorage) {
-            const minDate = minDateInLocalStorage;
-            const maxDate = maxDateInLocalStorage;
-            const date = scheduleDateInLocalStorage;
+            const minDate = new Date(minDateInLocalStorage).toISOString().split('T')[0];
+            const maxDate = new Date(maxDateInLocalStorage).toISOString().split('T')[0];
+            const date = new Date(scheduleDateInLocalStorage).toISOString().slice(0, 16);
             setDateInfo({
                 minDate,
                 maxDate,
