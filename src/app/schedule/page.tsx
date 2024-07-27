@@ -292,7 +292,9 @@ const SchedulePage: React.FC = () => {
                     onClick={() => {
                         router.back();
                     }}
-                ></Button>
+                >
+                    취소
+                </Button>
                 <span className={styles.buttonGap} />
                 <Button type='ok' onClick={() => console.log('저장 버튼 클릭됨')}>
                     저장
