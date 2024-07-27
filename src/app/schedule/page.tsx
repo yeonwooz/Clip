@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAtom } from 'jotai';
 import {
     scheduleLoadingAtom,
@@ -17,12 +17,19 @@ import Button from '~/components/Buttons';
 import LoadingSchedule from './loading';
 import { dummy } from './dummy';
 import { useRouter } from 'next/navigation';
+import { pageTitleAtom, leftIconAtom, rightIconAtom, RightIcon } from '~/store/headerAtoms';
+import { regionAtom } from '~/store/atom';
 
 const SchedulePage: React.FC = () => {
     const [shouldFetch] = useAtom(shouldFetchSchedule);
     const [loading] = useAtom(scheduleLoadingAtom);
     const [error] = useAtom(scheduleErrorAtom);
-    const [schedulesInStore, setSchedulesInStore] = useAtom(schedulesAtom);
+    const [schedulesInStore] = useAtom(schedulesAtom);
+    const [pageTitle, setPageTitle] = useAtom(pageTitleAtom);
+    const [leftIcon, setLeftIcon] = useAtom(leftIconAtom);
+    const [rightIcon, setRightIcon] = useAtom(rightIconAtom);
+    const [region] = useAtom(regionAtom);
+
     const fetchSchedule = useFetchSchedule();
     const router = useRouter();
 
@@ -30,6 +37,10 @@ const SchedulePage: React.FC = () => {
     const [dataWithDummyItems, setDataWithDummyItems] = useState<Schedule[]>([]);
 
     useEffect(() => {
+        setPageTitle(`${region} 여행`);
+        setLeftIcon(null);
+        setRightIcon(RightIcon.write);
+
         if (shouldFetch) {
             fetchSchedule({
                 region: '부산',

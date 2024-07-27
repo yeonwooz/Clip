@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 import { birthYearAtom, genderAtom } from '../../store/atom';
 import styles from './userInfoForm.module.css';
-import { pageTitleAtom } from '~/store/headerAtoms';
+import { pageTitleAtom, leftIconAtom, LeftIcon } from '~/store/headerAtoms';
 
 // 추가: 폼 완성 여부를 체크하는 atom
 const isFormCompleteAtom = atom((get) => get(birthYearAtom) !== '' && get(genderAtom) !== '');
@@ -67,12 +67,13 @@ const UserInfoForm: React.FC = () => {
     const [isFormComplete] = useAtom(isFormCompleteAtom);
     const router = useRouter();
     const [pageTitle, setPageTitle] = useAtom(pageTitleAtom);
-
+    const [leftIcon, setLeftIcon] = useAtom(leftIconAtom);
     const handleSubmit = () => {
         router.push('/chat');
     };
     useEffect(() => {
         setPageTitle('정보 입력');
+        setLeftIcon(LeftIcon.back);
     }, []);
 
     return (

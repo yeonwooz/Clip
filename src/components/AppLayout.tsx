@@ -8,7 +8,6 @@ import styles from './AppLoyout.module.css';
 export default function AppLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const [showHeader, setShowHeader] = useState(false);
-    const [showBackButton, setShowBackButton] = useState(false);
 
     useEffect(() => {
         if (pathname !== '/') {
@@ -21,7 +20,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
     return (
         <div className={styles.container}>
-            {showHeader && <Header showBackButton={showBackButton} />}
+            {showHeader && <Header />}
             <div className={styles.contentsContainer}>
                 {React.cloneElement(children as React.ReactElement, { setShowHeader })}
             </div>

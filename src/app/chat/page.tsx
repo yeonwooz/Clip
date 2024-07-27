@@ -8,7 +8,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { birthYearAtom, genderAtom, regionAtom } from '../../store/atom';
 import styles from './chatPage.module.css';
 import { useRouter } from 'next/navigation';
-import { pageTitleAtom } from '~/store/headerAtoms';
+import { pageTitleAtom, leftIconAtom, rightIconAtom, LeftIcon, RightIcon } from '~/store/headerAtoms';
 
 interface Message {
     id: number;
@@ -39,6 +39,8 @@ const apiClient = axios.create({
 const ChatPage: React.FC = () => {
     const router = useRouter();
     const [pageTitle, setPageTitle] = useAtom(pageTitleAtom);
+    const [leftIcon, setLeftIcon] = useAtom(leftIconAtom);
+    const [rightIcon, setRightIcon] = useAtom(rightIconAtom);
 
     const [messages, setMessages] = useState<Message[]>([]);
     const [inputMessage, setInputMessage] = useState('');
@@ -70,6 +72,8 @@ const ChatPage: React.FC = () => {
 
     useEffect(() => {
         setPageTitle('');
+        setLeftIcon(LeftIcon.chat);
+        setRightIcon(RightIcon.calendar);
     }, []);
 
     const handleSendMessage = (text: string) => {
