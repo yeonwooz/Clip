@@ -6,9 +6,11 @@
     background-color: #ffffff;
     overflow-y: auto;
     padding-bottom: 60px;
+    padding-top: 30px;
 }
 
 .content {
+    padding-top: 80px;
     overflow-y: auto; /* 스크롤이 가능하도록 설정 */
     margin-bottom: 20px;
 }
@@ -58,7 +60,6 @@
     width: 128px; /* 날짜 아이템의 너비를 적절히 설정 */
     flex-shrink: 0; /* 날짜 아이템이 줄어들지 않도록 설정 */
     margin-right: 10px; /* 날짜 아이템 사이의 간격 설정 */
-    margin-top: 80px;
     padding: 10px;
     position: relative;
     height: 1440px; /* 24시간을 기준으로 높이를 설정 */
@@ -70,7 +71,7 @@
     position: relative;
     width: 50px;
     text-align: right;
-    margin: 80px 20px 0 20px;
+    margin: 0 20px 0 20px;
     box-sizing: border-box;
 }
 
