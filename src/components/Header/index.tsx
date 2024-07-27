@@ -3,7 +3,7 @@ import Link from 'next/link';
 import styles from './Header.module.css';
 import Image from 'next/image';
 import { useAtom } from 'jotai';
-import { scheduleLoadingAtom } from '~/app/store/scheduleAtom';
+import { scheduleLoadingAtom } from '~/store/scheduleAtom';
 
 interface HeaderProps {
     showBackButton: boolean;

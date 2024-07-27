@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Providers } from './providers';
-import AppLayout from './components/AppLayout';
+import AppLayout from '~/components/AppLayout';
 import localFont from 'next/font/local';
 
 export const metadata: Metadata = {

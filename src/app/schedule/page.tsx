@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { useAtom } from 'jotai';
-import { scheduleAtom, scheduleLoadingAtom, scheduleErrorAtom, Schedule, ScheduleItem } from '../store/scheduleAtom';
-import { useFetchSchedule } from '../store/scheduleActions';
+import { scheduleAtom, scheduleLoadingAtom, scheduleErrorAtom, Schedule, ScheduleItem } from '../../store/scheduleAtom';
+import { useFetchSchedule } from '../../store/scheduleActions';
 import styles from './schedule.module.css';
 import {
     DragDropContext,
@@ -13,7 +13,7 @@ import {
     DraggableProvided,
     ResponderProvided,
 } from '@hello-pangea/dnd';
-import Button from '@/components/Buttons';
+import Button from '~/components/Buttons';
 import LoadingSchedule from './loading';
 import { dummy } from './dummy';
 import { useRouter } from 'next/navigation';
