@@ -8,6 +8,7 @@ import Button from '~/components/Buttons';
 import _ from 'lodash';
 import { useAtom } from 'jotai';
 import { LeftIcon, leftIconAtom, pageTitleAtom, rightIconAtom } from '~/store/headerAtoms';
+import { m } from 'framer-motion';
 
 const ScheduleDetailPage: React.FC = () => {
     const router = useRouter();
@@ -62,11 +63,13 @@ const ScheduleDetailPage: React.FC = () => {
                 maxDate,
                 date,
             });
+            console.log(minDate, maxDate, date);
             setStart(date);
             const formattedEndDate = getEndDateFromStartDate(date);
             setEnd(formattedEndDate);
         }
-    }, [setLeftIcon, setPageTitle, setRightIcon]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     function handleStartDate(event: React.ChangeEvent<HTMLInputElement>) {
         const startDateTime = event.target.value;
