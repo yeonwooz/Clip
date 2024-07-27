@@ -8,7 +8,7 @@ import styles from './schedule.module.css';
 import { DragDropContext, Droppable, Draggable, DropResult, DraggableProvided } from '@hello-pangea/dnd';
 import Button from '@/components/Buttons';
 import LoadingSchedule from './loading';
-// import { dummy } from './dummy';
+import { dummy } from './dummy';
 
 const SchedulePage: React.FC = () => {
     const [data, setData] = useAtom(scheduleAtom);
@@ -19,13 +19,13 @@ const SchedulePage: React.FC = () => {
     const [dataWithDummyItems, setDataWithDummyItems] = useState<Schedule[]>([]);
 
     useEffect(() => {
-        fetchSchedule({
-            region: '부산',
-            startDate: '2024080210', // YYYYMMDDHH
-            endDate: '2024080310',
-            min: 4, // 하루 최소 일정 갯수
-        });
-        // setData(dummy);
+        // fetchSchedule({
+        //     region: '부산',
+        //     startDate: '2024080210', // YYYYMMDDHH
+        //     endDate: '2024080310',
+        //     min: 4, // 하루 최소 일정 갯수
+        // });
+        setData(dummy);
     }, []);
 
     const getTimeSlots = () => {
@@ -105,7 +105,12 @@ const SchedulePage: React.FC = () => {
         const day = dateString.slice(6, 8);
         const date = new Date(`${year}-${month}-${day}`);
         const dayOfWeek = daysOfWeek[date.getDay()];
-        return `${month}.${day}. ${dayOfWeek}요일`;
+        // return `${month}.${day}.<br/> ${dayOfWeek}요일`;
+        return {
+            month,
+            day,
+            dayOfWeek,
+        };
     };
 
     if (loading) {
@@ -139,7 +144,13 @@ const SchedulePage: React.FC = () => {
                                             ref={provided.innerRef}
                                         >
                                             <div className={styles.dateTextContainer}>
-                                                <div className={styles.dateText}>{formatDate(daySchedule.date)}</div>
+                                                <div className={styles.dateText}>
+                                                    {formatDate(daySchedule.date).month}.
+                                                    {formatDate(daySchedule.date).day}.
+                                                </div>
+                                                <div className={styles.dateText}>
+                                                    {formatDate(daySchedule.date).dayOfWeek}요일
+                                                </div>
                                             </div>
                                             {daySchedule.item.map((item, itemIdx) => {
                                                 const topPosition = parseInt(item.startTime.slice(0, 2)) * 60 + 'px';

@@ -45,6 +45,7 @@
 
 .timeLabel {
     height: 60px; /* 1시간 간격을 60px로 설정 */
+    font-size: 14px;
 }
 
 .scheduleGrid {
@@ -121,6 +122,10 @@
     position: absolute;
     top: -60px;
     padding: 8px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
 }
 
 .dateText {
@@ -128,7 +133,6 @@
     font-weight: 600;
     line-height: 20px;
     text-align: center;
-    width: 40px;
     text-wrap: wrap;
 }
 
