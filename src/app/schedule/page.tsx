@@ -122,8 +122,7 @@ const SchedulePage: React.FC = () => {
 
     return (
         <div className={styles.container}>
-            <div className={styles.contents}>
-                <h1>부산여행</h1>
+            <div className={styles.content}>
                 <div className={styles.scheduleGridContainer}>
                     <div className={styles.timeLabels}>
                         {getTimeSlots().map((timeSlot, idx) => (

@@ -1,5 +1,4 @@
 .container {
-    padding: 20px;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -8,21 +7,21 @@
     overflow-y: auto;
 }
 
-.contents {
+.content {
     overflow-y: auto; /* 스크롤이 가능하도록 설정 */
     margin-bottom: 20px;
 }
 
-.contents::-webkit-scrollbar {
+.content::-webkit-scrollbar {
     width: 12px; /* 스크롤바 너비 */
 }
 
-.contents::-webkit-scrollbar-track {
+.content::-webkit-scrollbar-track {
     background: #e0e0e0; /* 스크롤바 트랙 색상 */
     border-radius: 10px; /* 스크롤바 트랙 라운드 */
 }
 
-.contents::-webkit-scrollbar-thumb {
+.content::-webkit-scrollbar-thumb {
     background-color: #888; /* 스크롤바 색상 */
     border-radius: 10px; /* 스크롤바 라운드 */
     border: 3px solid #e0e0e0; /* 스크롤바와 트랙 사이의 간격 */
@@ -35,12 +34,10 @@
 
 .timeLabels {
     position: relative;
-    margin-top: 70px;
     width: 50px;
     text-align: right;
-    padding-right: 10px;
+    margin: 70px 20px 0 20px;
     box-sizing: border-box;
-    background: white; /* 백그라운드 색상을 설정하여 시간 라벨이 스크롤 시에도 보이도록 */
 }
 
 .timeLabel {
@@ -70,7 +67,7 @@
 }
 
 .scheduleDay {
-    width: 105px; /* 날짜 아이템의 너비를 적절히 설정 */
+    width: 128px; /* 날짜 아이템의 너비를 적절히 설정 */
     flex-shrink: 0; /* 날짜 아이템이 줄어들지 않도록 설정 */
     margin-right: 10px; /* 날짜 아이템 사이의 간격 설정 */
     padding: 10px;
