@@ -35,16 +35,13 @@ const ScheduleDetailPage: React.FC = () => {
     function getEndDateFromStartDate(startDateTime: string): string {
         const startDate = new Date(startDateTime);
         const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // 60분 더하기
-
-        const offset = startDate.getTimezoneOffset() * 60000; // 타임존 오프셋 계산
-        const correctedEndDate = new Date(endDate.getTime() - offset); // 타임존 보정
-
-        return correctedEndDate.toISOString().slice(0, 16);
+        return endDate.toISOString().slice(0, 16);
     }
 
     useEffect(() => {
         setLeftIcon(LeftIcon.back);
         setRightIcon(null);
+
         const detailInfoInLocalStorage = localStorage.getItem('scheduleDetail');
         if (detailInfoInLocalStorage) {
             const info = JSON.parse(detailInfoInLocalStorage);
@@ -57,9 +54,9 @@ const ScheduleDetailPage: React.FC = () => {
         const scheduleDateInLocalStorage = localStorage.getItem('scheduleDate');
 
         if (minDateInLocalStorage && maxDateInLocalStorage && scheduleDateInLocalStorage) {
-            const minDate = minDateInLocalStorage;
-            const maxDate = maxDateInLocalStorage;
-            const date = scheduleDateInLocalStorage;
+            const minDate = new Date(minDateInLocalStorage).toISOString().split('T')[0];
+            const maxDate = new Date(maxDateInLocalStorage).toISOString().split('T')[0];
+            const date = new Date(scheduleDateInLocalStorage).toISOString().slice(0, 16);
             setDateInfo({
                 minDate,
                 maxDate,
@@ -69,10 +66,9 @@ const ScheduleDetailPage: React.FC = () => {
             const formattedEndDate = getEndDateFromStartDate(date);
             setEnd(formattedEndDate);
         }
-    }, []);
+    }, [setLeftIcon, setPageTitle, setRightIcon]);
 
-    // @ts-ignore
-    function handleStartDate(event) {
+    function handleStartDate(event: React.ChangeEvent<HTMLInputElement>) {
         const startDateTime = event.target.value;
         setStart(startDateTime);
         const formattedEndDate = getEndDateFromStartDate(startDateTime);
@@ -82,7 +78,6 @@ const ScheduleDetailPage: React.FC = () => {
             startTime: startDateTime,
             endTime: formattedEndDate,
         }));
-        console.log(startDateTime);
     }
 
     function deleteItem() {
@@ -199,21 +194,11 @@ const ScheduleDetailPage: React.FC = () => {
                     </div>
                 </div>
                 <div className={styles.buttonGroup}>
-                    <Button
-                        type='cancel'
-                        onClick={() => {
-                            deleteItem();
-                        }}
-                    >
+                    <Button type='cancel' onClick={deleteItem}>
                         삭제
                     </Button>
                     <span className={styles.buttonGap} />
-                    <Button
-                        type='ok'
-                        onClick={() => {
-                            save();
-                        }}
-                    >
+                    <Button type='ok' onClick={save}>
                         저장
                     </Button>
                 </div>
