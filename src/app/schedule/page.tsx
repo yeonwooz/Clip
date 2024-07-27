@@ -51,12 +51,12 @@ const SchedulePage: React.FC = () => {
             setSchedules(schedulesInStore);
             localStorage.setItem('schedules', JSON.stringify(schedules));
         } else {
-            // setSchedules(dummy);
-            // localStorage.setItem('schedules', JSON.stringify(dummy));
-
             const schedulesInLocalstorage = localStorage.getItem('schedules');
             if (schedulesInLocalstorage) {
                 setSchedules(JSON.parse(schedulesInLocalstorage));
+            } else {
+                setSchedules(dummy);
+                localStorage.setItem('schedules', JSON.stringify(dummy));
             }
         }
     }, []);
