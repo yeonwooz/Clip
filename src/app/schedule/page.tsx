@@ -17,6 +17,15 @@ const SchedulePage: React.FC = () => {
     const [dataWithDummyItems, setDataWithDummyItems] = useState([]);
 
     useEffect(() => {
+        fetchSchedule({
+            region: '부산',
+            startDate: '2024080110', // YYYYMMDDHH
+            endDate: '2024080310',
+            min: 4, // 하루 최소 일정 갯수
+        });
+    }, []);
+
+    useEffect(() => {
         const addDummyItems = (daySchedule) => {
             const timeSlots = getTimeSlots();
             const existingTimes = daySchedule.items.map((item) => item.startTime.slice(0, 2) + ':00');
@@ -92,6 +101,13 @@ const SchedulePage: React.FC = () => {
         }
         return timeSlots;
     };
+
+    if (loading) {
+        return <p>로딩 중...</p>;
+    }
+    if (error) {
+        return <p>에러 발생: {error?.message}</p>;
+    }
 
     return (
         <div className={styles.container}>

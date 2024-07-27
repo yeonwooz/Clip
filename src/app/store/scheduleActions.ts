@@ -1,5 +1,5 @@
 import { useSetAtom } from 'jotai';
-import { fetchData } from '../api';
+import { postData } from '../api';
 import { scheduleAtom, scheduleLoadingAtom, scheduleErrorAtom } from './scheduleAtom';
 
 export const useFetchSchedule = () => {
@@ -7,11 +7,11 @@ export const useFetchSchedule = () => {
     const setLoading = useSetAtom(scheduleLoadingAtom);
     const setError = useSetAtom(scheduleErrorAtom);
 
-    const fetchSchedule = async () => {
+    const fetchSchedule = async (param) => {
         setLoading(true);
         setError(null);
         try {
-            const data = await fetchData('/schedule');
+            const data = await postData('/schedule', param);
             setSchedule(data);
         } catch (error) {
             setError(error);
