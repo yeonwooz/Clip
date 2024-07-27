@@ -1,0 +1,79 @@
+.form {
+  width: 100%;
+  height: 100%;
+  padding: 16px;
+  background-color: #fff;
+  overflow: auto;
+
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+
+  position: relative;
+  padding-bottom: 60px; /* 버튼 높이 + 여백 */
+}
+
+.formGroup {
+  margin-bottom: 20px;
+}
+
+.label {
+  display: block;
+  margin-bottom: 16px;
+  font-weight: bold;
+}
+
+.select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.genderSelect {
+  display: flex;
+  width: 100%;
+  gap: 10px;
+}
+
+.genderOption {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.selected {
+  border: 1px solid #ee4865;
+  color: #ee4865;
+  font-weight: bold;
+}
+
+.radioInput {
+  display: none;
+}
+
+.submitButton {
+  display: flex;
+  width: 343px;
+  height: 56px;
+  padding: 0px 16px;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+
+  border-radius: 8px;
+  background: #ee4865;
+  color: white;
+  font-weight: bold;
+
+  position: fixed;
+  bottom: env(safe-area-inset-bottom);
+}
+
+.submitButton:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
