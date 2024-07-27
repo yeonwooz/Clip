@@ -21,6 +21,9 @@ import { pageTitleAtom, leftIconAtom, rightIconAtom, RightIcon } from '~/store/h
 import { regionAtom } from '~/store/atom';
 
 const SchedulePage: React.FC = () => {
+    const router = useRouter();
+    const fetchSchedule = useFetchSchedule();
+
     const [shouldFetch] = useAtom(shouldFetchSchedule);
     const [loading] = useAtom(scheduleLoadingAtom);
     const [error] = useAtom(scheduleErrorAtom);
@@ -30,11 +33,7 @@ const SchedulePage: React.FC = () => {
     const [rightIcon, setRightIcon] = useAtom(rightIconAtom);
     const [region] = useAtom(regionAtom);
 
-    const fetchSchedule = useFetchSchedule();
-    const router = useRouter();
-
     const [schedules, setSchedules] = useState<Schedule[]>([]);
-    const [dataWithDummyItems, setDataWithDummyItems] = useState<Schedule[]>([]);
 
     useEffect(() => {
         setPageTitle(`${region} 여행`);
@@ -48,23 +47,36 @@ const SchedulePage: React.FC = () => {
                 endDate: '2024080310',
                 min: 4, // 하루 최소 일정 갯수
             });
-            setSchedules(schedulesInStore);
+            setSchedules(
+                schedulesInStore.map((schedule) => ({
+                    ...schedule,
+                    item: schedule.item.map((item) => ({
+                        ...item,
+                        startTime: item.startTime.slice(0, 2) + '0000',
+                        endTime: item.endTime.slice(0, 2) + '0059',
+                    })),
+                })),
+            );
             localStorage.setItem('schedules', JSON.stringify(schedules));
         } else {
             const schedulesInLocalstorage = localStorage.getItem('schedules');
             if (schedulesInLocalstorage) {
                 setSchedules(JSON.parse(schedulesInLocalstorage));
             } else {
-                setSchedules(dummy);
+                setSchedules(
+                    dummy.map((schedule) => ({
+                        ...schedule,
+                        item: schedule.item.map((item) => ({
+                            ...item,
+                            startTime: item.startTime.slice(0, 2) + '0000',
+                            endTime: item.endTime.slice(0, 2) + '0059',
+                        })),
+                    })),
+                );
                 localStorage.setItem('schedules', JSON.stringify(dummy));
             }
         }
     }, []);
-
-    useEffect(() => {
-        const allItems: Schedule[] = schedules?.map((daySchedule) => addDummyItems(daySchedule));
-        setDataWithDummyItems(allItems);
-    }, [schedules]);
 
     const getTimeSlots = () => {
         const timeSlots = [];
@@ -72,23 +84,6 @@ const SchedulePage: React.FC = () => {
             timeSlots.push(`${i.toString().padStart(2, '0')}:00`);
         }
         return timeSlots;
-    };
-
-    const addDummyItems = (daySchedule: Schedule) => {
-        const timeSlots = getTimeSlots();
-        const existingTimes = daySchedule.item.map((item) => item.startTime.slice(0, 2) + ':00');
-        const dummyItems = timeSlots
-            .filter((timeSlot) => !existingTimes.includes(timeSlot))
-            .map((timeSlot, index) => ({
-                title: `빈 시간 ${index}`,
-                startTime: timeSlot.replace(':', '') + '00',
-                endTime: timeSlot.replace(':', '') + '59',
-                description: '',
-                address: '',
-                isDummy: true, // 더미 아이템임을 표시
-            }));
-
-        return { ...daySchedule, item: [...daySchedule.item, ...dummyItems] };
     };
 
     const onDragEnd = (result: DropResult, provided: ResponderProvided) => {
@@ -102,32 +97,35 @@ const SchedulePage: React.FC = () => {
         const sourceIndex = source.index;
         const destIndex = destination.index;
 
-        const sourceDay = { ...dataWithDummyItems[sourceDayIndex] };
-        const destDay = { ...dataWithDummyItems[destDayIndex] };
+        const sourceDay = { ...schedules[sourceDayIndex] };
+        const destDay = { ...schedules[destDayIndex] };
 
-        const [movedItem] = sourceDay.item.splice(sourceIndex, 1);
+        const movedItem = sourceDay.item[sourceIndex];
+        const targetItem = destDay.item[destIndex];
 
-        const newStartTime = calculateNewStartTime(destIndex);
-        movedItem.startTime = newStartTime;
+        const tempStartTime = movedItem.startTime;
+        const tempEndTime = movedItem.endTime;
 
-        destDay.item.splice(destIndex, 0, movedItem);
+        movedItem.startTime = targetItem.startTime;
+        movedItem.endTime = targetItem.endTime;
 
-        const newData = [...dataWithDummyItems];
+        targetItem.startTime = tempStartTime;
+        targetItem.endTime = tempEndTime;
+
+        const newData = [...schedules];
         newData[sourceDayIndex] = sourceDay;
         newData[destDayIndex] = destDay;
 
-        setDataWithDummyItems(newData);
+        setSchedules(newData);
     };
 
     const calculateNewStartTime = (index: number) => {
-        const hours = String(Math.floor(index)).padStart(2, '0');
+        const hours = String(index).padStart(2, '0');
         return `${hours}0000`;
     };
 
-    // 요일 배열
     const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
 
-    // 날짜 형식을 변경하는 함수
     const formatDate = (dateString: string) => {
         const year = dateString.slice(0, 4);
         const month = dateString.slice(4, 6);
@@ -143,34 +141,25 @@ const SchedulePage: React.FC = () => {
     };
 
     function saveDateToLocalStorage(dateString: string, timeString: string, key: string) {
-        // 날짜 문자열을 변환하여 원하는 형식으로 만듭니다.
         const year = dateString.slice(0, 4);
         const month = dateString.slice(4, 6);
         const day = dateString.slice(6, 8);
 
-        // 시간 문자열을 HH:mm 형식으로 변환합니다.
         const hours = timeString.slice(0, 2);
         const minutes = timeString.slice(2, 4);
 
-        // 시간 문자열이 올바른 형식인지 확인합니다.
         const timePattern = /^([01]\d|2[0-3])([0-5]\d)$/;
         if (!timePattern.test(timeString)) {
             console.error('Invalid time format. Please use HHmm format.');
             return;
         }
 
-        // ISO 8601 형식의 날짜 및 시간 문자열 생성
         const dateTimeString = `${year}-${month}-${day}T${hours}:${minutes}:00`;
 
-        // 로컬 스토리지에 저장
         localStorage.setItem(key, dateTimeString);
     }
 
     const handleClickItem = (date: string, item: ScheduleItem) => {
-        if (item.isDummy) {
-            return;
-        }
-
         const daysLength = schedules.length - 1;
         const firstDate = schedules[0];
         const lastDate = schedules[daysLength - 1];
@@ -184,7 +173,6 @@ const SchedulePage: React.FC = () => {
 
     const handleMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         e.preventDefault();
-        // setGrabbing(true);
     };
 
     const handleMouseUp = (date: string, item: ScheduleItem) => {
@@ -212,7 +200,7 @@ const SchedulePage: React.FC = () => {
                     </div>
                     <DragDropContext onDragEnd={onDragEnd}>
                         <div className={styles.scheduleGrid}>
-                            {dataWithDummyItems.map((daySchedule: Schedule, dayIndex) => (
+                            {schedules.map((daySchedule: Schedule, dayIndex) => (
                                 <Droppable droppableId={`${dayIndex}`} key={dayIndex} type='ITEM'>
                                     {(provided, snapshot) => (
                                         <div
@@ -239,9 +227,7 @@ const SchedulePage: React.FC = () => {
                                                     >
                                                         {(provided, snapshot) => (
                                                             <div
-                                                                className={`${styles.scheduleItem} ${
-                                                                    item.isDummy ? styles.hiddenItem : ''
-                                                                }`}
+                                                                className={styles.scheduleItem}
                                                                 ref={provided.innerRef}
                                                                 {...provided.draggableProps}
                                                                 {...provided.dragHandleProps}
@@ -255,21 +241,15 @@ const SchedulePage: React.FC = () => {
                                                                     position: 'absolute',
                                                                     zIndex: snapshot.isDragging ? 1000 : 'auto',
                                                                     cursor: 'pointer',
-                                                                    visibility:
-                                                                        snapshot.isDragging || !item.isDummy
-                                                                            ? 'visible'
-                                                                            : 'hidden',
                                                                 }}
                                                             >
                                                                 <div
                                                                     {...provided.dragHandleProps}
                                                                     className={styles.dragHandle}
                                                                 >
-                                                                    {!item.isDummy && (
-                                                                        <p>
-                                                                            <strong>{item.title}</strong>
-                                                                        </p>
-                                                                    )}
+                                                                    <p>
+                                                                        <strong>{item.title}</strong>
+                                                                    </p>
                                                                 </div>
                                                             </div>
                                                         )}
