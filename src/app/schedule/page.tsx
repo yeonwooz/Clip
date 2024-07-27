@@ -8,6 +8,7 @@ import styles from './schedule.module.css';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import Button from '@/components/Buttons';
 import LoadingSchedule from './loading';
+import { dummy } from './dummy';
 
 const SchedulePage: React.FC = () => {
     const [data, setData] = useAtom(scheduleAtom);
@@ -24,6 +25,7 @@ const SchedulePage: React.FC = () => {
             endDate: '2024080310',
             min: 4, // 하루 최소 일정 갯수
         });
+        // setData(dummy);
     }, []);
 
     useEffect(() => {
