@@ -1,11 +1,18 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useAtom } from 'jotai';
-import { scheduleAtom, scheduleLoadingAtom, scheduleErrorAtom, Schedule } from '../store/scheduleAtom';
+import { scheduleAtom, scheduleLoadingAtom, scheduleErrorAtom, Schedule, ScheduleItem } from '../store/scheduleAtom';
 import { useFetchSchedule } from '../store/scheduleActions';
 import styles from './schedule.module.css';
-import { DragDropContext, Droppable, Draggable, DropResult, DraggableProvided } from '@hello-pangea/dnd';
+import {
+    DragDropContext,
+    Droppable,
+    Draggable,
+    DropResult,
+    DraggableProvided,
+    ResponderProvided,
+} from '@hello-pangea/dnd';
 import Button from '@/components/Buttons';
 import LoadingSchedule from './loading';
 import { dummy } from './dummy';
@@ -15,6 +22,7 @@ const SchedulePage: React.FC = () => {
     const [data, setData] = useAtom(scheduleAtom);
     const [loading] = useAtom(scheduleLoadingAtom);
     const [error] = useAtom(scheduleErrorAtom);
+    const [grabbing, setGrabbing] = useState(false);
     const fetchSchedule = useFetchSchedule();
     const router = useRouter();
 
@@ -59,7 +67,7 @@ const SchedulePage: React.FC = () => {
         setDataWithDummyItems(allItems);
     }, [data]);
 
-    const onDragEnd = (result: DropResult, provided: DraggableProvided) => {
+    const onDragEnd = (result: DropResult, provided: ResponderProvided) => {
         if (!result.destination) return;
 
         const { source, destination } = result;
@@ -92,10 +100,6 @@ const SchedulePage: React.FC = () => {
         return `${hours}0000`;
     };
 
-    const formatTime = (time: string) => {
-        return time.slice(0, 2) + ':' + time.slice(2);
-    };
-
     // 요일 배열
     const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -113,34 +117,18 @@ const SchedulePage: React.FC = () => {
         };
     };
 
-    const handleItemPress = (item) => {
-        router.push(`/detail/${item.id}`);
+    const handleClickItem = (item: ScheduleItem) => {
+        router.push(`/detail/${item.title}-${item.startTime}`);
     };
 
-    const handleItemDragStart = (e) => {
-        e.target.style.cursor = 'grabbing';
-    };
-
-    const handleItemDragEnd = (e) => {
-        e.target.style.cursor = 'grab';
-    };
-
-    const handleMouseDown = (e, item) => {
+    const handleMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         e.preventDefault();
-        item.timer = setTimeout(() => {
-            handleItemDragStart(e);
-        }, 500);
     };
 
-    const handleMouseUp = (e, item) => {
-        clearTimeout(item.timer);
-        if (e.target.style.cursor !== 'grabbing') {
-            handleItemPress(item);
+    const handleMouseUp = (item: ScheduleItem) => {
+        if (!grabbing) {
+            handleClickItem(item);
         }
-    };
-
-    const handleMouseLeave = (e, item) => {
-        clearTimeout(item.timer);
     };
 
     if (loading) {
@@ -196,11 +184,8 @@ const SchedulePage: React.FC = () => {
                                                                 ref={provided.innerRef}
                                                                 {...provided.draggableProps}
                                                                 {...provided.dragHandleProps}
-                                                                onMouseDown={(e) => handleMouseDown(e, item)}
-                                                                onMouseUp={(e) => handleMouseUp(e, item)}
-                                                                onMouseLeave={(e) => handleMouseLeave(e, item)}
-                                                                onDragStart={handleItemDragStart}
-                                                                onDragEnd={handleItemDragEnd}
+                                                                onMouseDown={(e) => handleMouseDown(e)}
+                                                                onMouseUp={() => handleMouseUp(item)}
                                                                 style={{
                                                                     ...provided.draggableProps.style,
                                                                     top: topPosition,
