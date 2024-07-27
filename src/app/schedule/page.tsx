@@ -112,91 +112,86 @@ const SchedulePage: React.FC = () => {
         return <LoadingSchedule />;
     }
     if (error) {
-        return <p>에러 발생: {error?.message}</p>;
+        return <div className={styles.errorPageContainer}>서버 에러{error?.message}</div>;
     }
 
     return (
         <div className={styles.container}>
             <div className={styles.contents}>
                 <h1>부산여행</h1>
-                {!loading && !error && (
-                    <div className={styles.scheduleGridContainer}>
-                        <div className={styles.timeLabels}>
-                            {getTimeSlots().map((timeSlot, idx) => (
-                                <div className={styles.timeLabel} key={idx}>
-                                    {timeSlot}
-                                </div>
+                <div className={styles.scheduleGridContainer}>
+                    <div className={styles.timeLabels}>
+                        {getTimeSlots().map((timeSlot, idx) => (
+                            <div className={styles.timeLabel} key={idx}>
+                                {timeSlot}
+                            </div>
+                        ))}
+                    </div>
+                    {/* @ts-ignore */}
+                    <DragDropContext onDragEnd={onDragEnd}>
+                        <div className={styles.scheduleGrid}>
+                            {dataWithDummyItems.map((daySchedule, dayIndex) => (
+                                <Droppable droppableId={`${dayIndex}`} key={dayIndex} type='ITEM'>
+                                    {(provided, snapshot) => (
+                                        <div
+                                            className={styles.scheduleDay}
+                                            {...provided.droppableProps}
+                                            ref={provided.innerRef}
+                                        >
+                                            <div className={styles.dateTextContainer}>
+                                                <div className={styles.dateText}>{formatDate(daySchedule.date)}</div>
+                                            </div>
+                                            {daySchedule.item.map((item, itemIdx) => {
+                                                const topPosition = parseInt(item.startTime.slice(0, 2)) * 60 + 'px';
+                                                return (
+                                                    <Draggable
+                                                        key={`${dayIndex}-${item.title}-${item.startTime}`}
+                                                        draggableId={`${dayIndex}-${item.title}-${item.startTime}`}
+                                                        index={itemIdx}
+                                                    >
+                                                        {(provided, snapshot) => (
+                                                            <div
+                                                                className={`${styles.scheduleItem} ${
+                                                                    item.isDummy ? styles.hiddenItem : ''
+                                                                }`}
+                                                                ref={provided.innerRef}
+                                                                {...provided.draggableProps}
+                                                                {...provided.dragHandleProps}
+                                                                style={{
+                                                                    ...provided.draggableProps.style,
+                                                                    top: topPosition,
+                                                                    left: '0px',
+                                                                    position: 'absolute',
+                                                                    zIndex: snapshot.isDragging ? 1000 : 'auto',
+                                                                    visibility:
+                                                                        snapshot.isDragging || !item.isDummy
+                                                                            ? 'visible'
+                                                                            : 'hidden',
+                                                                }}
+                                                            >
+                                                                <div
+                                                                    {...provided.dragHandleProps}
+                                                                    className={styles.dragHandle}
+                                                                >
+                                                                    {!item.isDummy && (
+                                                                        <p>
+                                                                            <strong>{item.title}</strong>
+                                                                        </p>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </Draggable>
+                                                );
+                                            })}
+                                            {/* {provided.placeholder} */}
+                                        </div>
+                                    )}
+                                </Droppable>
                             ))}
                         </div>
-                        {/* @ts-ignore */}
-                        <DragDropContext onDragEnd={onDragEnd}>
-                            <div className={styles.scheduleGrid}>
-                                {dataWithDummyItems.map((daySchedule, dayIndex) => (
-                                    <Droppable droppableId={`${dayIndex}`} key={dayIndex} type='ITEM'>
-                                        {(provided, snapshot) => (
-                                            <div
-                                                className={styles.scheduleDay}
-                                                {...provided.droppableProps}
-                                                ref={provided.innerRef}
-                                            >
-                                                <div className={styles.dateTextContainer}>
-                                                    <div className={styles.dateText}>
-                                                        {formatDate(daySchedule.date)}
-                                                    </div>
-                                                </div>
-                                                {daySchedule.item.map((item, itemIdx) => {
-                                                    const topPosition =
-                                                        parseInt(item.startTime.slice(0, 2)) * 60 + 'px';
-                                                    return (
-                                                        <Draggable
-                                                            key={`${dayIndex}-${item.title}-${item.startTime}`}
-                                                            draggableId={`${dayIndex}-${item.title}-${item.startTime}`}
-                                                            index={itemIdx}
-                                                        >
-                                                            {(provided, snapshot) => (
-                                                                <div
-                                                                    className={`${styles.scheduleItem} ${
-                                                                        item.isDummy ? styles.hiddenItem : ''
-                                                                    }`}
-                                                                    ref={provided.innerRef}
-                                                                    {...provided.draggableProps}
-                                                                    {...provided.dragHandleProps}
-                                                                    style={{
-                                                                        ...provided.draggableProps.style,
-                                                                        top: topPosition,
-                                                                        left: '0px',
-                                                                        position: 'absolute',
-                                                                        zIndex: snapshot.isDragging ? 1000 : 'auto',
-                                                                        visibility:
-                                                                            snapshot.isDragging || !item.isDummy
-                                                                                ? 'visible'
-                                                                                : 'hidden',
-                                                                    }}
-                                                                >
-                                                                    <div
-                                                                        {...provided.dragHandleProps}
-                                                                        className={styles.dragHandle}
-                                                                    >
-                                                                        {!item.isDummy && (
-                                                                            <p>
-                                                                                <strong>{item.title}</strong>
-                                                                            </p>
-                                                                        )}
-                                                                    </div>
-                                                                </div>
-                                                            )}
-                                                        </Draggable>
-                                                    );
-                                                })}
-                                                {/* {provided.placeholder} */}
-                                            </div>
-                                        )}
-                                    </Droppable>
-                                ))}
-                            </div>
-                        </DragDropContext>
-                    </div>
-                )}
+                    </DragDropContext>
+                </div>
             </div>
             <div className={styles.buttonGroup}>
                 <Button type='cancel' onClick={() => console.log('취소 버튼 클릭됨')}>
