@@ -39,26 +39,28 @@ const SchedulePage: React.FC = () => {
         setPageTitle(`${region} 여행`);
         setLeftIcon(null);
         setRightIcon(RightIcon.write);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
+    useEffect(() => {
         if (shouldFetch) {
             fetchSchedule({
                 region: '부산',
                 startDate: '2024080210', // YYYYMMDDHH
                 endDate: '2024080310',
                 min: 4, // 하루 최소 일정 갯수
+            }).then(() => {
+                const newSchedules = schedulesInStore.map((schedule) => ({
+                    ...schedule,
+                    item: schedule.item.map((item) => ({
+                        ...item,
+                        startTime: item.startTime.slice(0, 2) + '0000',
+                        endTime: item.endTime.slice(0, 2) + '0059',
+                    })),
+                }));
+                setSchedules(newSchedules);
+                localStorage.setItem('schedules', JSON.stringify(newSchedules));
             });
-
-            const newSchedules = schedulesInStore.map((schedule) => ({
-                ...schedule,
-                item: schedule.item.map((item) => ({
-                    ...item,
-                    startTime: item.startTime.slice(0, 2) + '0000',
-                    endTime: item.endTime.slice(0, 2) + '0059',
-                })),
-            }));
-
-            setSchedules(newSchedules);
-            localStorage.setItem('schedules', JSON.stringify(newSchedules));
         } else {
             const schedulesInLocalstorage = localStorage.getItem('schedules');
             if (schedulesInLocalstorage) {
@@ -76,7 +78,9 @@ const SchedulePage: React.FC = () => {
                 localStorage.setItem('schedules', JSON.stringify(newSchedules));
             }
         }
-    }, [shouldFetch, fetchSchedule, schedulesInStore, region, setPageTitle, setLeftIcon, setRightIcon]);
+        // shouldFetch, fetchSchedule, schedulesInStore, region, setPageTitle, setLeftIcon, setRightIcon
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [shouldFetch, schedulesInStore]);
 
     const getTimeSlots = () => {
         const timeSlots = [];
