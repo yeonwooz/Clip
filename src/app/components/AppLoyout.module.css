@@ -1,9 +1,11 @@
 .container {
-    overflow: auto;
+    overflow: hidden;
     height: 100%;
 }
 
 .contentsContainer {
     margin-top: 44px;
+    height: 100%;
     background-color: #ee4865;
+    overflow: auto;
 }

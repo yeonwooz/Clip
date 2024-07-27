@@ -19,13 +19,13 @@ const SchedulePage: React.FC = () => {
     const [dataWithDummyItems, setDataWithDummyItems] = useState([]);
 
     useEffect(() => {
-        fetchSchedule({
-            region: '부산',
-            startDate: '2024080110', // YYYYMMDDHH
-            endDate: '2024080310',
-            min: 4, // 하루 최소 일정 갯수
-        });
-        // setData(dummy);
+        // fetchSchedule({
+        //     region: '부산',
+        //     startDate: '2024080110', // YYYYMMDDHH
+        //     endDate: '2024080310',
+        //     min: 4, // 하루 최소 일정 갯수
+        // });
+        setData(dummy);
     }, []);
 
     useEffect(() => {
