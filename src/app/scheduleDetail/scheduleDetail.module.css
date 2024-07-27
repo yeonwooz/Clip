@@ -1,0 +1,63 @@
+.container {
+    background-color: #ffffff;
+    height: 100%;
+}
+
+.form {
+    width: 100%;
+    padding: 16px;
+    overflow: auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+
+    position: relative;
+    padding-bottom: 60px; /* 버튼 높이 + 여백 */
+}
+
+.formGroup {
+    margin-bottom: 20px;
+}
+
+.scheduleTitle {
+    cursor: default;
+}
+
+.label {
+    display: block;
+    margin-bottom: 16px;
+    font-weight: bold;
+}
+
+.buttonGroup {
+    display: flex;
+    justify-content: space-between;
+}
+
+.buttonGap {
+    width: 16px;
+}
+
+.submitButton {
+    display: flex;
+    width: 343px;
+    height: 56px;
+    padding: 0px 16px;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+
+    border-radius: 8px;
+    background: #ee4865;
+    color: white;
+    font-weight: bold;
+
+    position: fixed;
+    bottom: env(safe-area-inset-bottom);
+}
+
+.submitButton:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}

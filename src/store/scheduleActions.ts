@@ -1,6 +1,6 @@
 import { useSetAtom } from 'jotai';
 import { postData } from '../api';
-import { scheduleAtom, scheduleLoadingAtom, scheduleErrorAtom } from './scheduleAtom';
+import { schedulesAtom, scheduleLoadingAtom, scheduleErrorAtom } from './scheduleAtom';
 
 // TODO: 사용자 정보 store 생기면 교체
 export interface Param {
@@ -11,7 +11,7 @@ export interface Param {
 }
 
 export const useFetchSchedule = () => {
-    const setSchedule = useSetAtom(scheduleAtom);
+    const setSchedule = useSetAtom(schedulesAtom);
     const setLoading = useSetAtom(scheduleLoadingAtom);
     const setError = useSetAtom(scheduleErrorAtom);
 

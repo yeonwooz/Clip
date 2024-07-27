@@ -2,41 +2,58 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { useAtom } from 'jotai';
-import { scheduleAtom, scheduleLoadingAtom, scheduleErrorAtom, Schedule, ScheduleItem } from '../../store/scheduleAtom';
+import {
+    scheduleLoadingAtom,
+    scheduleErrorAtom,
+    Schedule,
+    ScheduleItem,
+    shouldFetchSchedule,
+    schedulesAtom,
+} from '../../store/scheduleAtom';
 import { useFetchSchedule } from '../../store/scheduleActions';
 import styles from './schedule.module.css';
-import {
-    DragDropContext,
-    Droppable,
-    Draggable,
-    DropResult,
-    DraggableProvided,
-    ResponderProvided,
-} from '@hello-pangea/dnd';
+import { DragDropContext, Droppable, Draggable, DropResult, ResponderProvided } from '@hello-pangea/dnd';
 import Button from '~/components/Buttons';
 import LoadingSchedule from './loading';
 import { dummy } from './dummy';
 import { useRouter } from 'next/navigation';
 
 const SchedulePage: React.FC = () => {
-    const [data, setData] = useAtom(scheduleAtom);
+    const [shouldFetch] = useAtom(shouldFetchSchedule);
     const [loading] = useAtom(scheduleLoadingAtom);
     const [error] = useAtom(scheduleErrorAtom);
-    const [grabbing, setGrabbing] = useState(false);
+    const [schedulesInStore, setSchedulesInStore] = useAtom(schedulesAtom);
     const fetchSchedule = useFetchSchedule();
     const router = useRouter();
 
+    const [schedules, setSchedules] = useState<Schedule[]>([]);
     const [dataWithDummyItems, setDataWithDummyItems] = useState<Schedule[]>([]);
 
     useEffect(() => {
-        // fetchSchedule({
-        //     region: '부산',
-        //     startDate: '2024080210', // YYYYMMDDHH
-        //     endDate: '2024080310',
-        //     min: 4, // 하루 최소 일정 갯수
-        // });
-        setData(dummy);
+        if (shouldFetch) {
+            fetchSchedule({
+                region: '부산',
+                startDate: '2024080210', // YYYYMMDDHH
+                endDate: '2024080310',
+                min: 4, // 하루 최소 일정 갯수
+            });
+            setSchedules(schedulesInStore);
+            localStorage.setItem('schedules', JSON.stringify(schedules));
+        } else {
+            setSchedules(dummy);
+            localStorage.setItem('schedules', JSON.stringify(dummy));
+
+            // const schedulesInLocalstorage = localStorage.getItem('schedules');
+            // if (schedulesInLocalstorage) {
+            //     setSchedules(JSON.parse(schedulesInLocalstorage));
+            // }
+        }
     }, []);
+
+    useEffect(() => {
+        const allItems: Schedule[] = schedules?.map((daySchedule) => addDummyItems(daySchedule));
+        setDataWithDummyItems(allItems);
+    }, [schedules]);
 
     const getTimeSlots = () => {
         const timeSlots = [];
@@ -59,13 +76,9 @@ const SchedulePage: React.FC = () => {
                 address: '',
                 isDummy: true, // 더미 아이템임을 표시
             }));
+
         return { ...daySchedule, item: [...daySchedule.item, ...dummyItems] };
     };
-
-    useEffect(() => {
-        const allItems: Schedule[] = data?.map((daySchedule) => addDummyItems(daySchedule));
-        setDataWithDummyItems(allItems);
-    }, [data]);
 
     const onDragEnd = (result: DropResult, provided: ResponderProvided) => {
         if (!result.destination) return;
@@ -118,18 +131,22 @@ const SchedulePage: React.FC = () => {
     };
 
     const handleClickItem = (item: ScheduleItem) => {
-        router.push(`/detail/${item.title}-${item.startTime}`);
+        if (item.isDummy) {
+            return;
+        }
+        localStorage.setItem('scheduleDetail', JSON.stringify(item));
+        router.push(`/scheduleDetail?${item.title}-${item.startTime}`);
     };
 
     const handleMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         e.preventDefault();
+        // setGrabbing(true);
     };
 
     const handleMouseUp = (item: ScheduleItem) => {
-        if (!grabbing) {
-            handleClickItem(item);
-        }
+        handleClickItem(item);
     };
+    const handleMouseLeave = () => {};
 
     if (loading) {
         return <LoadingSchedule />;
@@ -186,13 +203,14 @@ const SchedulePage: React.FC = () => {
                                                                 {...provided.dragHandleProps}
                                                                 onMouseDown={(e) => handleMouseDown(e)}
                                                                 onMouseUp={() => handleMouseUp(item)}
+                                                                onMouseLeave={() => handleMouseLeave()}
                                                                 style={{
                                                                     ...provided.draggableProps.style,
                                                                     top: topPosition,
                                                                     left: '0px',
                                                                     position: 'absolute',
                                                                     zIndex: snapshot.isDragging ? 1000 : 'auto',
-                                                                    cursor: snapshot.isDragging ? 'grabbing' : 'grab',
+                                                                    cursor: 'pointer',
                                                                     visibility:
                                                                         snapshot.isDragging || !item.isDummy
                                                                             ? 'visible'
@@ -224,7 +242,12 @@ const SchedulePage: React.FC = () => {
                 </div>
             </div>
             <div className={styles.buttonGroup}>
-                <Button type='cancel' onClick={() => console.log('취소 버튼 클릭됨')}>
+                <Button
+                    type='cancel'
+                    onClick={() => {
+                        router.back();
+                    }}
+                >
                     취소
                 </Button>
                 <span className={styles.buttonGap} />
