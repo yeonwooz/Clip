@@ -2,14 +2,18 @@ import React from 'react';
 import Link from 'next/link';
 import styles from './Header.module.css';
 import Image from 'next/image';
+import { useAtom } from 'jotai';
+import { scheduleLoadingAtom } from '~/app/store/scheduleAtom';
 
 interface HeaderProps {
     showBackButton: boolean;
 }
 
 export default function Header({ showBackButton }: HeaderProps) {
+    const [loading] = useAtom(scheduleLoadingAtom);
+
     return (
-        <div className={styles.headerContainer}>
+        <div className={`${styles.headerContainer} ${loading ? styles.loadingSchedule : ''}`}>
             {showBackButton ? (
                 <span aria-label='go_back_button'>
                     <Image src='/icons/Chevron_left.svg' alt='go_back' width={20} height={20} />

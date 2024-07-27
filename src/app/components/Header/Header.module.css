@@ -1,9 +1,16 @@
 .headerContainer {
+    position: fixed;
+    width: 375px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     height: 44px;
     padding: 0 10px;
+    background-color: #ffffff;
+}
+
+.loadingSchedule {
+    background-color: #ee4865;
 }
 
 .title {

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Header from './Header';
 import { usePathname } from 'next/navigation';
+import styles from './AppLoyout.module.css';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
@@ -10,18 +11,20 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     const [showBackButton, setShowBackButton] = useState(false);
 
     useEffect(() => {
-        if (pathname === '/') {
-            setShowHeader(pathname !== '/');
-        } else {
+        if (pathname !== '/') {
             setShowHeader(true);
+        } else {
+            setShowHeader(false);
         }
         // TODO: setShowBackButton
     }, [pathname]);
 
     return (
-        <>
+        <div className={styles.container}>
             {showHeader && <Header showBackButton={showBackButton} />}
-            {React.cloneElement(children as React.ReactElement, { setShowHeader })}
-        </>
+            <div className={styles.contentsContainer}>
+                {React.cloneElement(children as React.ReactElement, { setShowHeader })}
+            </div>
+        </div>
     );
 }

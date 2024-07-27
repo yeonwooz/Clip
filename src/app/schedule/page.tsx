@@ -7,6 +7,7 @@ import { useFetchSchedule } from '../store/scheduleActions';
 import styles from './schedule.module.css';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import Button from '@/components/Buttons';
+import LoadingSchedule from './loading';
 
 const SchedulePage: React.FC = () => {
     const [data, setData] = useAtom(scheduleAtom);
@@ -41,7 +42,7 @@ const SchedulePage: React.FC = () => {
             return { ...daySchedule, items: [...daySchedule.items, ...dummyItems] };
         };
 
-        setDataWithDummyItems(data.map((daySchedule) => addDummyItems(daySchedule)));
+        setDataWithDummyItems(data?.map((daySchedule) => addDummyItems(daySchedule)));
     }, [data]);
 
     const onDragEnd = (result: DropResult) => {
@@ -103,7 +104,7 @@ const SchedulePage: React.FC = () => {
     };
 
     if (loading) {
-        return <p>로딩 중...</p>;
+        return <LoadingSchedule />;
     }
     if (error) {
         return <p>에러 발생: {error?.message}</p>;
@@ -113,8 +114,6 @@ const SchedulePage: React.FC = () => {
         <div className={styles.container}>
             <div className={styles.contents}>
                 <h1>부산여행</h1>
-                {loading && <p>로딩 중...</p>}
-                {error && <p>에러 발생: {error?.message}</p>}
                 {!loading && !error && (
                     <div className={styles.scheduleGridContainer}>
                         <div className={styles.timeLabels}>

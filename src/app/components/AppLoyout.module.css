@@ -1,0 +1,9 @@
+.container {
+    overflow: hidden;
+    height: 100%;
+}
+
+.contentsContainer {
+    margin-top: 44px;
+    background-color: #ee4865;
+}
