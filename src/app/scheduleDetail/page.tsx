@@ -7,11 +7,13 @@ import styles from './scheduleDetail.module.css';
 import Button from '~/components/Buttons';
 import _ from 'lodash';
 import { useAtom } from 'jotai';
-import { pageTitleAtom } from '~/store/headerAtoms';
+import { LeftIcon, leftIconAtom, pageTitleAtom, rightIconAtom } from '~/store/headerAtoms';
 
 const ScheduleDetailPage: React.FC = () => {
     const router = useRouter();
     const [pageTitle, setPageTitle] = useAtom(pageTitleAtom);
+    const [leftIcon, setLeftIcon] = useAtom(leftIconAtom);
+    const [rightIcon, setRightIcon] = useAtom(rightIconAtom);
 
     const [scheduleDetail, setScheduleDetail] = useState({
         title: '',
@@ -41,6 +43,8 @@ const ScheduleDetailPage: React.FC = () => {
     }
 
     useEffect(() => {
+        setLeftIcon(LeftIcon.back);
+        setRightIcon(null);
         const detailInfoInLocalStorage = localStorage.getItem('scheduleDetail');
         if (detailInfoInLocalStorage) {
             const info = JSON.parse(detailInfoInLocalStorage);
