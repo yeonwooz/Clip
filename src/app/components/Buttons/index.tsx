@@ -3,7 +3,7 @@ import styles from './Button.module.css';
 
 interface ButtonProps {
     children: React.ReactNode;
-    onClick: () => void;
+    onClick?: () => void;
     type: 'cancel' | 'ok';
 }
 

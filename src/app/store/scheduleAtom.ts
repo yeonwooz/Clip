@@ -1,19 +1,19 @@
 import { atom } from 'jotai';
 
-interface ScheduleItem {
+export interface ScheduleItem {
     title: string;
     startTime: string;
     endTime: string;
     description: string;
     address: string;
+    isDummy?: boolean;
 }
 
-interface Schedule {
+export interface Schedule {
     date: string;
-    items: ScheduleItem[];
+    item: ScheduleItem[];
 }
 
 export const scheduleAtom = atom<Schedule[]>([]);
-
 export const scheduleLoadingAtom = atom<boolean>(false);
-export const scheduleErrorAtom = atom<Error | null>(null);
+export const scheduleErrorAtom = atom<any | null>(null);

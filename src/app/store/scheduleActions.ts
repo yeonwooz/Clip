@@ -2,19 +2,27 @@ import { useSetAtom } from 'jotai';
 import { postData } from '../api';
 import { scheduleAtom, scheduleLoadingAtom, scheduleErrorAtom } from './scheduleAtom';
 
+// TODO: 사용자 정보 store 생기면 교체
+export interface Param {
+    region: string;
+    startDate: string;
+    endDate: string;
+    min: number;
+}
+
 export const useFetchSchedule = () => {
     const setSchedule = useSetAtom(scheduleAtom);
     const setLoading = useSetAtom(scheduleLoadingAtom);
     const setError = useSetAtom(scheduleErrorAtom);
 
-    const fetchSchedule = async (param) => {
+    const fetchSchedule = async (param: Param) => {
         setLoading(true);
         setError(null);
         try {
             const data = await postData('/schedule', param);
             setSchedule(data);
         } catch (error) {
-            setError(error);
+            setError(error || null);
         } finally {
             setLoading(false);
         }

@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { useAtom } from 'jotai';
-import { scheduleAtom, scheduleLoadingAtom, scheduleErrorAtom } from '../store/scheduleAtom';
+import { scheduleAtom, scheduleLoadingAtom, scheduleErrorAtom, Schedule } from '../store/scheduleAtom';
 import { useFetchSchedule } from '../store/scheduleActions';
 import styles from './schedule.module.css';
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, DropResult, DraggableProvided } from '@hello-pangea/dnd';
 import Button from '@/components/Buttons';
 import LoadingSchedule from './loading';
 import { dummy } from './dummy';
@@ -16,16 +16,16 @@ const SchedulePage: React.FC = () => {
     const [error] = useAtom(scheduleErrorAtom);
     const fetchSchedule = useFetchSchedule();
 
-    const [dataWithDummyItems, setDataWithDummyItems] = useState([]);
+    const [dataWithDummyItems, setDataWithDummyItems] = useState<Schedule[]>([]);
 
     useEffect(() => {
-        fetchSchedule({
-            region: '부산',
-            startDate: '2024080210', // YYYYMMDDHH
-            endDate: '2024080310',
-            min: 4, // 하루 최소 일정 갯수
-        });
-        // setData(dummy);
+        // fetchSchedule({
+        //     region: '부산',
+        //     startDate: '2024080210', // YYYYMMDDHH
+        //     endDate: '2024080310',
+        //     min: 4, // 하루 최소 일정 갯수
+        // });
+        setData(dummy);
     }, []);
 
     const getTimeSlots = () => {
@@ -38,7 +38,7 @@ const SchedulePage: React.FC = () => {
     };
 
     useEffect(() => {
-        const addDummyItems = (daySchedule) => {
+        const addDummyItems = (daySchedule: Schedule) => {
             const timeSlots = getTimeSlots();
             const existingTimes = daySchedule.item.map((item) => item.startTime.slice(0, 2) + ':00');
             const dummyItems = timeSlots
@@ -47,16 +47,19 @@ const SchedulePage: React.FC = () => {
                     title: `빈 시간 ${index}`,
                     startTime: timeSlot.replace(':', '') + '00',
                     endTime: timeSlot.replace(':', '') + '59',
+                    description: '',
                     address: '',
                     isDummy: true, // 더미 아이템임을 표시
                 }));
-            return { ...daySchedule, items: [...daySchedule.item, ...dummyItems] };
+            return { ...daySchedule, item: [...daySchedule.item, ...dummyItems] };
         };
 
-        setDataWithDummyItems(data);
+        const allItems: Schedule[] = data?.map((daySchedule) => addDummyItems(daySchedule));
+
+        setDataWithDummyItems(allItems);
     }, [data]);
 
-    const onDragEnd = (result: DropResult) => {
+    const onDragEnd = (result: DropResult, provided: DraggableProvided) => {
         if (!result.destination) return;
 
         const { source, destination } = result;
@@ -70,12 +73,12 @@ const SchedulePage: React.FC = () => {
         const sourceDay = { ...dataWithDummyItems[sourceDayIndex] };
         const destDay = { ...dataWithDummyItems[destDayIndex] };
 
-        const [movedItem] = sourceDay.items.splice(sourceIndex, 1);
+        const [movedItem] = sourceDay.item.splice(sourceIndex, 1);
 
         const newStartTime = calculateNewStartTime(destIndex);
         movedItem.startTime = newStartTime;
 
-        destDay.items.splice(destIndex, 0, movedItem);
+        destDay.item.splice(destIndex, 0, movedItem);
 
         const newData = [...dataWithDummyItems];
         newData[sourceDayIndex] = sourceDay;
@@ -126,6 +129,7 @@ const SchedulePage: React.FC = () => {
                                 </div>
                             ))}
                         </div>
+                        {/* @ts-ignore */}
                         <DragDropContext onDragEnd={onDragEnd}>
                             <div className={styles.scheduleGrid}>
                                 {dataWithDummyItems.map((daySchedule, dayIndex) => (
@@ -185,7 +189,7 @@ const SchedulePage: React.FC = () => {
                                                         </Draggable>
                                                     );
                                                 })}
-                                                {provided.placeholder}
+                                                {/* {provided.placeholder} */}
                                             </div>
                                         )}
                                     </Droppable>
