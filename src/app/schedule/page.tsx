@@ -46,18 +46,19 @@ const SchedulePage: React.FC = () => {
                 startDate: '2024080210', // YYYYMMDDHH
                 endDate: '2024080310',
                 min: 4, // 하루 최소 일정 갯수
-            });
-            const newSchedules = schedulesInStore.map((schedule) => ({
-                ...schedule,
-                item: schedule.item.map((item) => ({
-                    ...item,
-                    startTime: item.startTime.slice(0, 2) + '0000',
-                    endTime: item.endTime.slice(0, 2) + '0059',
-                })),
-            }));
+            }).then((schedulesInStore) => {
+                const newSchedules = schedulesInStore.map((schedule) => ({
+                    ...schedule,
+                    item: schedule.item.map((item) => ({
+                        ...item,
+                        startTime: item.startTime.slice(0, 2) + '0000',
+                        endTime: item.endTime.slice(0, 2) + '0059',
+                    })),
+                }));
 
-            setSchedules(newSchedules);
-            localStorage.setItem('schedules', JSON.stringify(newSchedules));
+                setSchedules(newSchedules);
+                localStorage.setItem('schedules', JSON.stringify(newSchedules));
+            });
         } else {
             const schedulesInLocalstorage = localStorage.getItem('schedules');
             if (schedulesInLocalstorage) {
@@ -103,14 +104,20 @@ const SchedulePage: React.FC = () => {
 
         // 대상 위치에 다른 아이템이 있는 경우 밀어냄
         const newItems = Array.from(destDay.item);
-        newItems.splice(sourceIndex, 1); // 기존 위치에서 아이템 제거
-        newItems.splice(destIndex, 0, movedItem); // 새로운 위치에 아이템 추가
+        if (sourceDayIndex === destDayIndex) {
+            // 같은 날 일정에서 드래그 앤 드롭
+            newItems.splice(sourceIndex, 1);
+            newItems.splice(destIndex, 0, movedItem);
+        } else {
+            sourceDay.item.splice(sourceIndex, 1);
+            newItems.splice(destIndex, 0, movedItem);
+        }
 
         const newSchedules = schedules.map((schedule, idx) => {
             if (idx === sourceDayIndex) {
                 return {
                     ...schedule,
-                    item: schedule.item.filter((_, i) => i !== sourceIndex),
+                    item: sourceDay.item,
                 };
             } else if (idx === destDayIndex) {
                 return {

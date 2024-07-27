@@ -104,21 +104,6 @@
     cursor: grabbing;
 }
 
-.hiddenItem {
-    position: relative;
-    background: #ebecfb;
-    padding: 10px;
-    border-radius: 5px;
-    user-select: none;
-    margin-bottom: 20px;
-    text-wrap: wrap;
-    height: 50px;
-    overflow: hidden;
-    z-index: -1; /* 기본 z-index 설정 */
-    width: 100%;
-    visibility: hidden;
-}
-
 .dateTextContainer {
     position: absolute;
     top: -60px;
