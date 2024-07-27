@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useAtom } from 'jotai';
 import { scheduleAtom, scheduleLoadingAtom, scheduleErrorAtom, Schedule } from '../store/scheduleAtom';
 import { useFetchSchedule } from '../store/scheduleActions';
@@ -9,12 +9,14 @@ import { DragDropContext, Droppable, Draggable, DropResult, DraggableProvided } 
 import Button from '@/components/Buttons';
 import LoadingSchedule from './loading';
 import { dummy } from './dummy';
+import { useRouter } from 'next/navigation';
 
 const SchedulePage: React.FC = () => {
     const [data, setData] = useAtom(scheduleAtom);
     const [loading] = useAtom(scheduleLoadingAtom);
     const [error] = useAtom(scheduleErrorAtom);
     const fetchSchedule = useFetchSchedule();
+    const router = useRouter();
 
     const [dataWithDummyItems, setDataWithDummyItems] = useState<Schedule[]>([]);
 
@@ -36,25 +38,24 @@ const SchedulePage: React.FC = () => {
         return timeSlots;
     };
 
+    const addDummyItems = (daySchedule: Schedule) => {
+        const timeSlots = getTimeSlots();
+        const existingTimes = daySchedule.item.map((item) => item.startTime.slice(0, 2) + ':00');
+        const dummyItems = timeSlots
+            .filter((timeSlot) => !existingTimes.includes(timeSlot))
+            .map((timeSlot, index) => ({
+                title: `빈 시간 ${index}`,
+                startTime: timeSlot.replace(':', '') + '00',
+                endTime: timeSlot.replace(':', '') + '59',
+                description: '',
+                address: '',
+                isDummy: true, // 더미 아이템임을 표시
+            }));
+        return { ...daySchedule, item: [...daySchedule.item, ...dummyItems] };
+    };
+
     useEffect(() => {
-        const addDummyItems = (daySchedule: Schedule) => {
-            const timeSlots = getTimeSlots();
-            const existingTimes = daySchedule.item.map((item) => item.startTime.slice(0, 2) + ':00');
-            const dummyItems = timeSlots
-                .filter((timeSlot) => !existingTimes.includes(timeSlot))
-                .map((timeSlot, index) => ({
-                    title: `빈 시간 ${index}`,
-                    startTime: timeSlot.replace(':', '') + '00',
-                    endTime: timeSlot.replace(':', '') + '59',
-                    description: '',
-                    address: '',
-                    isDummy: true, // 더미 아이템임을 표시
-                }));
-            return { ...daySchedule, item: [...daySchedule.item, ...dummyItems] };
-        };
-
         const allItems: Schedule[] = data?.map((daySchedule) => addDummyItems(daySchedule));
-
         setDataWithDummyItems(allItems);
     }, [data]);
 
@@ -105,12 +106,41 @@ const SchedulePage: React.FC = () => {
         const day = dateString.slice(6, 8);
         const date = new Date(`${year}-${month}-${day}`);
         const dayOfWeek = daysOfWeek[date.getDay()];
-        // return `${month}.${day}.<br/> ${dayOfWeek}요일`;
         return {
             month,
             day,
             dayOfWeek,
         };
+    };
+
+    const handleItemPress = (item) => {
+        router.push(`/detail/${item.id}`);
+    };
+
+    const handleItemDragStart = (e) => {
+        e.target.style.cursor = 'grabbing';
+    };
+
+    const handleItemDragEnd = (e) => {
+        e.target.style.cursor = 'grab';
+    };
+
+    const handleMouseDown = (e, item) => {
+        e.preventDefault();
+        item.timer = setTimeout(() => {
+            handleItemDragStart(e);
+        }, 500);
+    };
+
+    const handleMouseUp = (e, item) => {
+        clearTimeout(item.timer);
+        if (e.target.style.cursor !== 'grabbing') {
+            handleItemPress(item);
+        }
+    };
+
+    const handleMouseLeave = (e, item) => {
+        clearTimeout(item.timer);
     };
 
     if (loading) {
@@ -131,7 +161,6 @@ const SchedulePage: React.FC = () => {
                             </div>
                         ))}
                     </div>
-                    {/* @ts-ignore */}
                     <DragDropContext onDragEnd={onDragEnd}>
                         <div className={styles.scheduleGrid}>
                             {dataWithDummyItems.map((daySchedule, dayIndex) => (
@@ -167,12 +196,18 @@ const SchedulePage: React.FC = () => {
                                                                 ref={provided.innerRef}
                                                                 {...provided.draggableProps}
                                                                 {...provided.dragHandleProps}
+                                                                onMouseDown={(e) => handleMouseDown(e, item)}
+                                                                onMouseUp={(e) => handleMouseUp(e, item)}
+                                                                onMouseLeave={(e) => handleMouseLeave(e, item)}
+                                                                onDragStart={handleItemDragStart}
+                                                                onDragEnd={handleItemDragEnd}
                                                                 style={{
                                                                     ...provided.draggableProps.style,
                                                                     top: topPosition,
                                                                     left: '0px',
                                                                     position: 'absolute',
                                                                     zIndex: snapshot.isDragging ? 1000 : 'auto',
+                                                                    cursor: snapshot.isDragging ? 'grabbing' : 'grab',
                                                                     visibility:
                                                                         snapshot.isDragging || !item.isDummy
                                                                             ? 'visible'
@@ -194,7 +229,7 @@ const SchedulePage: React.FC = () => {
                                                     </Draggable>
                                                 );
                                             })}
-                                            {/* {provided.placeholder} */}
+                                            {provided.placeholder}
                                         </div>
                                     )}
                                 </Droppable>

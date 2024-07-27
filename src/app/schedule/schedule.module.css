@@ -94,12 +94,12 @@
     justify-content: center;
     align-items: center;
     font-size: 14px;
+    cursor: pointer;
 }
 
-.dragHandle {
-    cursor: grab; /* 드래그 핸들로 인식되도록 설정 */
+.scheduleItem:active {
+    cursor: grabbing;
 }
-
 .hiddenItem {
     position: relative;
     background: #ebecfb;
