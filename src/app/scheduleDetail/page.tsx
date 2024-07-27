@@ -140,9 +140,7 @@ const ScheduleDetailPage: React.FC = () => {
         });
 
         localStorage.setItem('schedules', JSON.stringify(updatedSchedules));
-        console.log(currentSchedules);
 
-        console.log(updatedSchedules);
         router.push('/schedule');
     }
 

@@ -1,6 +1,5 @@
 'use client';
 
-<<<<<<< Updated upstream
 import { Select } from "@chakra-ui/react";
 import { atom, useAtom } from "jotai";
 import { useRouter } from "next/navigation";
@@ -8,17 +7,6 @@ import React from "react";
 import { birthYearAtom, genderAtom } from "../../store/atom";
 import styles from "./userInfoForm.module.css";
 
-=======
-import { Select } from '@chakra-ui/react';
-import { atom, useAtom } from 'jotai';
-import { useRouter } from 'next/navigation';
-import React from 'react';
-import styles from './userInfoForm.module.css';
-
-const birthYearAtom = atom<string>('');
-const genderAtom = atom<string>('');
-
->>>>>>> Stashed changes
 // 추가: 폼 완성 여부를 체크하는 atom
 const isFormCompleteAtom = atom((get) => get(birthYearAtom) !== '' && get(genderAtom) !== '');
 
@@ -27,7 +15,6 @@ const BirthYearSelect: React.FC = () => {
     const currentYear = new Date().getFullYear();
     const years = Array.from(new Array(100), (val, index) => currentYear - index);
 
-<<<<<<< Updated upstream
   return (
     <Select
       placeholder="선택해주세요"
@@ -42,17 +29,6 @@ const BirthYearSelect: React.FC = () => {
       ))}
     </Select>
   );
-=======
-    return (
-        <Select placeholder='선택해주세요' value={birthYear} onChange={(e) => setBirthYear(e.target.value)} height={14}>
-            {years.map((year) => (
-                <option key={year} value={year.toString()}>
-                    {year}
-                </option>
-            ))}
-        </Select>
-    );
->>>>>>> Stashed changes
 };
 
 const GenderSelect: React.FC = () => {
@@ -90,15 +66,9 @@ const UserInfoForm: React.FC = () => {
     const [isFormComplete] = useAtom(isFormCompleteAtom);
     const router = useRouter();
 
-<<<<<<< Updated upstream
   const handleSubmit = () => {
     router.push("/chat");
   };
-=======
-    const handleSubmit = () => {
-        router.push('/chat');
-    };
->>>>>>> Stashed changes
 
     return (
         <div className={styles.form}>
