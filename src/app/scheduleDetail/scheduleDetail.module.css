@@ -7,11 +7,9 @@
     width: 100%;
     padding: 16px;
     overflow: auto;
-
     display: flex;
     flex-direction: column;
     gap: 36px;
-
     position: relative;
     padding-bottom: 60px; /* 버튼 높이 + 여백 */
 }
@@ -28,6 +26,40 @@
     display: block;
     margin-bottom: 16px;
     font-weight: bold;
+}
+
+.startTimeInput {
+    margin-bottom: 6px;
+}
+
+.descriptionTitle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+}
+
+.annotation {
+    color: #54576f;
+    font-size: 10px;
+    line-height: 10px;
+}
+
+.descriptionContent {
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: flex-start;
+    text-wrap: wrap;
+}
+
+.descriptionLabel {
+    font-weight: bold;
+    font-size: 16px;
+    flex: 1;
+}
+
+.descriptionValue {
+    flex: 7;
 }
 
 .buttonGroup {

@@ -18,10 +18,3 @@ export const shouldFetchSchedule = atom<boolean>(false);
 export const schedulesAtom = atom<Schedule[]>([]);
 export const scheduleLoadingAtom = atom<boolean>(false);
 export const scheduleErrorAtom = atom<any | null>(null);
-// export const scheduleDetailAtom = atom<ScheduleItem>({
-//     title: '',
-//     startTime: '',
-//     endTime: '',
-//     description: '',
-//     address: '',
-// });

@@ -40,13 +40,13 @@ const SchedulePage: React.FC = () => {
             setSchedules(schedulesInStore);
             localStorage.setItem('schedules', JSON.stringify(schedules));
         } else {
-            setSchedules(dummy);
-            localStorage.setItem('schedules', JSON.stringify(dummy));
+            // setSchedules(dummy);
+            // localStorage.setItem('schedules', JSON.stringify(dummy));
 
-            // const schedulesInLocalstorage = localStorage.getItem('schedules');
-            // if (schedulesInLocalstorage) {
-            //     setSchedules(JSON.parse(schedulesInLocalstorage));
-            // }
+            const schedulesInLocalstorage = localStorage.getItem('schedules');
+            if (schedulesInLocalstorage) {
+                setSchedules(JSON.parse(schedulesInLocalstorage));
+            }
         }
     }, []);
 
@@ -124,16 +124,49 @@ const SchedulePage: React.FC = () => {
         const date = new Date(`${year}-${month}-${day}`);
         const dayOfWeek = daysOfWeek[date.getDay()];
         return {
+            year,
             month,
             day,
             dayOfWeek,
         };
     };
 
-    const handleClickItem = (item: ScheduleItem) => {
+    function saveDateToLocalStorage(dateString: string, timeString: string, key: string) {
+        // 날짜 문자열을 변환하여 원하는 형식으로 만듭니다.
+        const year = dateString.slice(0, 4);
+        const month = dateString.slice(4, 6);
+        const day = dateString.slice(6, 8);
+
+        // 시간 문자열을 HH:mm 형식으로 변환합니다.
+        const hours = timeString.slice(0, 2);
+        const minutes = timeString.slice(2, 4);
+
+        // 시간 문자열이 올바른 형식인지 확인합니다.
+        const timePattern = /^([01]\d|2[0-3])([0-5]\d)$/;
+        if (!timePattern.test(timeString)) {
+            console.error('Invalid time format. Please use HHmm format.');
+            return;
+        }
+
+        // ISO 8601 형식의 날짜 및 시간 문자열 생성
+        const dateTimeString = `${year}-${month}-${day}T${hours}:${minutes}:00`;
+
+        // 로컬 스토리지에 저장
+        localStorage.setItem(key, dateTimeString);
+    }
+
+    const handleClickItem = (date: string, item: ScheduleItem) => {
         if (item.isDummy) {
             return;
         }
+
+        const daysLength = schedules.length - 1;
+        const firstDate = schedules[0];
+        const lastDate = schedules[daysLength - 1];
+        saveDateToLocalStorage(firstDate.date, firstDate.item[0].startTime, 'minDate');
+        saveDateToLocalStorage(lastDate.date, lastDate.item[lastDate.item.length - 1].startTime, 'maxDate');
+        saveDateToLocalStorage(date, item.startTime, 'scheduleDate');
+
         localStorage.setItem('scheduleDetail', JSON.stringify(item));
         router.push(`/scheduleDetail?${item.title}-${item.startTime}`);
     };
@@ -143,8 +176,8 @@ const SchedulePage: React.FC = () => {
         // setGrabbing(true);
     };
 
-    const handleMouseUp = (item: ScheduleItem) => {
-        handleClickItem(item);
+    const handleMouseUp = (date: string, item: ScheduleItem) => {
+        handleClickItem(date, item);
     };
     const handleMouseLeave = () => {};
 
@@ -168,7 +201,7 @@ const SchedulePage: React.FC = () => {
                     </div>
                     <DragDropContext onDragEnd={onDragEnd}>
                         <div className={styles.scheduleGrid}>
-                            {dataWithDummyItems.map((daySchedule, dayIndex) => (
+                            {dataWithDummyItems.map((daySchedule: Schedule, dayIndex) => (
                                 <Droppable droppableId={`${dayIndex}`} key={dayIndex} type='ITEM'>
                                     {(provided, snapshot) => (
                                         <div
@@ -202,7 +235,7 @@ const SchedulePage: React.FC = () => {
                                                                 {...provided.draggableProps}
                                                                 {...provided.dragHandleProps}
                                                                 onMouseDown={(e) => handleMouseDown(e)}
-                                                                onMouseUp={() => handleMouseUp(item)}
+                                                                onMouseUp={() => handleMouseUp(daySchedule.date, item)}
                                                                 onMouseLeave={() => handleMouseLeave()}
                                                                 style={{
                                                                     ...provided.draggableProps.style,

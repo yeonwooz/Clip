@@ -1,7 +1,6 @@
 'use client';
 
 import { Input } from '@chakra-ui/react';
-import { atom, useAtom } from 'jotai';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import styles from './scheduleDetail.module.css';
@@ -18,12 +17,64 @@ const ScheduleDetailPage: React.FC = () => {
         address: '',
     });
 
+    const [dateInfo, setDateInfo] = useState({
+        minDate: '',
+        maxDate: '',
+        date: '',
+    });
+
+    const [start, setStart] = useState('');
+    const [end, setEnd] = useState('');
+
+    function getEndDateFromStartDate(startDateTime: string): string {
+        const startDate = new Date(startDateTime);
+        const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // 60분 더하기
+
+        const offset = startDate.getTimezoneOffset() * 60000; // 타임존 오프셋 계산
+        const correctedEndDate = new Date(endDate.getTime() - offset); // 타임존 보정
+
+        return correctedEndDate.toISOString().slice(0, 16);
+    }
+
     useEffect(() => {
         const detailInfoInLocalStorage = localStorage.getItem('scheduleDetail');
         if (detailInfoInLocalStorage) {
-            setScheduleDetail(JSON.parse(detailInfoInLocalStorage));
+            const info = JSON.parse(detailInfoInLocalStorage);
+            setScheduleDetail(info);
+        }
+
+        const minDateInLocalStorage = localStorage.getItem('minDate');
+        const maxDateInLocalStorage = localStorage.getItem('maxDate');
+        const scheduleDateInLocalStorage = localStorage.getItem('scheduleDate');
+
+        if (minDateInLocalStorage && maxDateInLocalStorage && scheduleDateInLocalStorage) {
+            const minDate = minDateInLocalStorage;
+            const maxDate = maxDateInLocalStorage;
+            const date = scheduleDateInLocalStorage;
+            setDateInfo({
+                minDate,
+                maxDate,
+                date,
+            });
+            setStart(date);
+            const formattedEndDate = getEndDateFromStartDate(date);
+            setEnd(formattedEndDate);
         }
     }, []);
+
+    // @ts-ignore
+    function handleStartDate(event) {
+        const startDateTime = event.target.value;
+        setStart(startDateTime);
+        const formattedEndDate = getEndDateFromStartDate(startDateTime);
+        setEnd(formattedEndDate);
+        setScheduleDetail((prevDetail) => ({
+            ...prevDetail,
+            startTime: startDateTime,
+            endTime: formattedEndDate,
+        }));
+        console.log(startDateTime);
+    }
 
     function deleteItem() {
         const schedulesInLocalStorage = localStorage.getItem('schedules');
@@ -54,22 +105,44 @@ const ScheduleDetailPage: React.FC = () => {
         router.push('/schedule');
     }
 
+    function getFormattedTime(dateTime: string): string {
+        const date = new Date(dateTime);
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return hours + minutes;
+    }
+
     function save() {
+        deleteItem();
         const schedulesInLocalStorage = localStorage.getItem('schedules');
         if (!schedulesInLocalStorage) {
             return;
         }
 
         const currentSchedules = JSON.parse(schedulesInLocalStorage);
+        const startDate = start.split('T')[0].split('-').join('');
+        console.log(startDate);
+
+        const formattedStartTime = getFormattedTime(start);
+        const formattedEndTime = getFormattedTime(end);
+
         const updatedSchedules = _.map(currentSchedules, (day: any) => {
-            return {
-                ...day,
-                item: _.map(day.item, (item: any) => (item.title === scheduleDetail.title ? scheduleDetail : item)),
-            };
+            if (day.date === startDate) {
+                // 기존 항목을 삭제하고 업데이트된 항목을 추가
+                const updatedItems = day.item.filter((item: any) => item.title !== scheduleDetail.title);
+                updatedItems.push({ ...scheduleDetail, startTime: formattedStartTime, endTime: formattedEndTime });
+                return {
+                    ...day,
+                    item: updatedItems,
+                };
+            }
+            return day;
         });
 
         localStorage.setItem('schedules', JSON.stringify(updatedSchedules));
+        console.log(currentSchedules);
 
+        console.log(updatedSchedules);
         router.push('/schedule');
     }
 
@@ -88,10 +161,36 @@ const ScheduleDetailPage: React.FC = () => {
                 </div>
                 <div className={styles.formGroup}>
                     <label className={styles.label}>일정 시작/종료</label>
-                    <Input placeholder='일정 시작' height={14} />
-                    <Input placeholder='일정 종료' height={14} />
+                    <Input
+                        className={styles.startTimeInput}
+                        placeholder='일정 시작'
+                        height={14}
+                        type='datetime-local'
+                        value={start}
+                        onChange={handleStartDate}
+                        min={dateInfo.minDate}
+                        max={dateInfo.maxDate}
+                    />
+                    <Input placeholder='일정 종료' height={14} type='datetime-local' readOnly value={end} />
                 </div>
+                <div className={styles.descriptionTitle}>
+                    <span>여행지 정보</span>
+                    <span className={styles.annotation}>네이버 API 활용</span>
+                </div>
+                <div>
+                    <div className={styles.descriptionContent}>
+                        <div className={styles.descriptionLabel}>주소 </div>
+                        <div className={styles.descriptionValue}>{scheduleDetail.address}</div>
+                    </div>
 
+                    <div className={styles.descriptionContent}>
+                        <div className={styles.descriptionLabel}>설명 </div>
+                        <div
+                            className={styles.descriptionValue}
+                            dangerouslySetInnerHTML={{ __html: scheduleDetail.description }}
+                        ></div>
+                    </div>
+                </div>
                 <div className={styles.buttonGroup}>
                     <Button
                         type='cancel'
