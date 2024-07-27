@@ -4,10 +4,8 @@ import { Select } from "@chakra-ui/react";
 import { atom, useAtom } from "jotai";
 import { useRouter } from "next/navigation";
 import React from "react";
+import { birthYearAtom, genderAtom } from "../../store/atom";
 import styles from "./userInfoForm.module.css";
-
-const birthYearAtom = atom<string>("");
-const genderAtom = atom<string>("");
 
 // 추가: 폼 완성 여부를 체크하는 atom
 const isFormCompleteAtom = atom((get) => get(birthYearAtom) !== "" && get(genderAtom) !== "");
@@ -18,7 +16,12 @@ const BirthYearSelect: React.FC = () => {
   const years = Array.from(new Array(100), (val, index) => currentYear - index);
 
   return (
-    <Select placeholder="선택해주세요" value={birthYear} onChange={(e) => setBirthYear(e.target.value)} height={14}>
+    <Select
+      placeholder="선택해주세요"
+      value={birthYear ?? ""}
+      onChange={(e) => setBirthYear(e.target.value)}
+      height={14}
+    >
       {years.map((year) => (
         <option key={year} value={year.toString()}>
           {year}
@@ -64,7 +67,7 @@ const UserInfoForm: React.FC = () => {
   const router = useRouter();
 
   const handleSubmit = () => {
-    router.push('/chat');
+    router.push("/chat");
   };
 
   return (

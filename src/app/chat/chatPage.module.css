@@ -1,0 +1,209 @@
+.chatRoom {
+  margin-top: 44px;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 44px);
+
+  background-color: #fff;
+}
+
+.messageListContainer {
+  flex-grow: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.logoBackground {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  background-image: url("/chat-logo.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  opacity: 0.5;
+}
+
+.messageList {
+  height: 100%;
+  overflow-y: auto;
+  padding: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ==============message============== */
+.message {
+  margin-bottom: 10px;
+}
+
+.userMessage {
+  display: inline-flex;
+  padding: 8px 12px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 30px;
+  border: 1px solid #d7d9f6;
+  align-self: flex-end;
+  max-width: 70%; /* 메시지 최대 너비 제한 */
+  word-wrap: break-word; /* 긴 단어 줄바꿈 */
+}
+
+.messageList {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.messageContainer {
+  display: flex;
+  margin-bottom: 16px;
+  align-items: flex-start;
+}
+
+.userMessageContainer {
+  justify-content: flex-end;
+}
+
+.botMessageContainer {
+  justify-content: flex-start;
+}
+
+.botProfilePic {
+  margin-right: 12px;
+}
+
+.botProfilePic img {
+  border-radius: 50%;
+}
+
+.message {
+  max-width: 300px;
+  padding: 8px 12px;
+  border-radius: 18px;
+}
+
+.userMessage {
+  background-color: #d7d9f6;
+  color: #000;
+  align-self: flex-end;
+}
+
+.botMessage {
+  background-color: transparent;
+  color: #000;
+}
+
+.regionsContainer {
+  display: flex;
+  gap: 4px;
+}
+
+.regionsContainer > button {
+  display: flex;
+  padding: 8px 12px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 8px;
+  border: 1px solid #d7d9f6;
+}
+
+/* ==============input============== */
+.inputForm {
+  width: 100%;
+  max-width: 375px;
+  display: flex;
+  padding: 10px;
+  background-color: #fff;
+
+  position: fixed;
+  bottom: 0;
+
+  z-index: 2;
+}
+
+.inputForm > div {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #ee4865;
+
+  display: flex;
+  justify-content: space-between;
+
+  padding: 16px;
+}
+
+.inputBox {
+  flex-grow: 1;
+  height: 30px;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+}
+
+/* ==============예시 메세지============== */
+
+.predefinedMessagesContainer {
+  width: 100%;
+  max-width: 375px;
+  overflow-x: auto;
+  background-color: #fff;
+  position: fixed;
+  bottom: 100px;
+  z-index: 2;
+}
+
+.predefinedMessages {
+  display: inline-flex; /* inline-flex로 변경 */
+  padding: 10px;
+  white-space: nowrap;
+}
+
+.predefinedMessageButton {
+  flex: 0 0 160px; /* flex-shrink를 0으로 설정하여 크기 고정 */
+  width: 160px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  margin-right: 10px;
+  background-color: #fff;
+  border: 1px solid #d7d9f6;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #54576f;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-align: center;
+}
+
+.predefinedMessageButton:hover {
+  border-color: #ee4865;
+  color: #ee4865;
+}
+
+.predefinedMessagesContainer::-webkit-scrollbar {
+  display: none; /* WebKit */
+}
+
+/* 기존 스타일 수정 */
+.messageListContainer {
+  padding-bottom: 120px; /* predefinedMessages와 inputForm의 높이를 고려하여 조정 */
+}
+
+.inputForm {
+  bottom: 10px; /* 약간의 여백을 주기 위해 조정 */
+}
