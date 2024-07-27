@@ -46,19 +46,19 @@ const SchedulePage: React.FC = () => {
                 startDate: '2024080210', // YYYYMMDDHH
                 endDate: '2024080310',
                 min: 4, // 하루 최소 일정 갯수
-            }).then((schedulesInStore) => {
-                const newSchedules = schedulesInStore.map((schedule) => ({
-                    ...schedule,
-                    item: schedule.item.map((item) => ({
-                        ...item,
-                        startTime: item.startTime.slice(0, 2) + '0000',
-                        endTime: item.endTime.slice(0, 2) + '0059',
-                    })),
-                }));
-
-                setSchedules(newSchedules);
-                localStorage.setItem('schedules', JSON.stringify(newSchedules));
             });
+
+            const newSchedules = schedulesInStore.map((schedule) => ({
+                ...schedule,
+                item: schedule.item.map((item) => ({
+                    ...item,
+                    startTime: item.startTime.slice(0, 2) + '0000',
+                    endTime: item.endTime.slice(0, 2) + '0059',
+                })),
+            }));
+
+            setSchedules(newSchedules);
+            localStorage.setItem('schedules', JSON.stringify(newSchedules));
         } else {
             const schedulesInLocalstorage = localStorage.getItem('schedules');
             if (schedulesInLocalstorage) {
