@@ -32,9 +32,10 @@ const ScheduleDetailPage: React.FC = () => {
     const [start, setStart] = useState('');
     const [end, setEnd] = useState('');
 
+    // 시작 시간 기준으로 2시간 뒤를 계산하는 함수
     function getEndDateFromStartDate(startDateTime: string): string {
         const startDate = new Date(startDateTime);
-        const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // 60분 더하기
+        const endDate = new Date(startDate.getTime() + 11 * 60 * 60 * 1000); // 11시간 더하기 -> TODO: 애초에 utc 기준으로 계산해서 들고 오도록 수정
         return endDate.toISOString().slice(0, 16);
     }
 
@@ -62,7 +63,6 @@ const ScheduleDetailPage: React.FC = () => {
                 maxDate,
                 date,
             });
-            console.log(minDate, maxDate, date);
             setStart(date);
             const formattedEndDate = getEndDateFromStartDate(date);
             setEnd(formattedEndDate);
