@@ -138,7 +138,6 @@ const SchedulePage: React.FC = () => {
         });
 
         setSchedules(newSchedules);
-        console.log(newSchedules);
         localStorage.setItem('schedules', JSON.stringify(newSchedules));
     };
 
@@ -166,7 +165,6 @@ const SchedulePage: React.FC = () => {
             dayOfWeek,
         };
     };
-
     function saveDateToLocalStorage(dateString: string, timeString: string, key: string) {
         const year = dateString.slice(0, 4);
         const month = dateString.slice(4, 6);
@@ -181,8 +179,23 @@ const SchedulePage: React.FC = () => {
             return;
         }
 
-        const dateTimeString = `${year}-${month}-${day}T${hours}:${minutes}:00`;
+        // 기존 날짜와 시간으로 Date 객체 생성
+        const date = new Date(`${year}-${month}-${day}T${hours}:${minutes}:00`);
 
+        // 현재 시간에 9시간 더하기
+        date.setHours(date.getHours() + 9);
+
+        // 년, 월, 일, 시, 분 추출
+        const updatedYear = date.getFullYear();
+        const updatedMonth = (date.getMonth() + 1).toString().padStart(2, '0');
+        const updatedDay = date.getDate().toString().padStart(2, '0');
+        const updatedHours = date.getHours().toString().padStart(2, '0');
+        const updatedMinutes = date.getMinutes().toString().padStart(2, '0');
+
+        // ISO 8601 포맷으로 변환
+        const dateTimeString = `${updatedYear}-${updatedMonth}-${updatedDay}T${updatedHours}:${updatedMinutes}:00`;
+
+        // 로컬 스토리지에 저장
         localStorage.setItem(key, dateTimeString);
     }
 

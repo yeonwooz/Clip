@@ -8,7 +8,6 @@ import Button from '~/components/Buttons';
 import _ from 'lodash';
 import { useAtom } from 'jotai';
 import { LeftIcon, leftIconAtom, pageTitleAtom, rightIconAtom } from '~/store/headerAtoms';
-import { m } from 'framer-motion';
 
 const ScheduleDetailPage: React.FC = () => {
     const router = useRouter();
