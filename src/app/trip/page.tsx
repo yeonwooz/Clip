@@ -1,12 +1,14 @@
 "use client";
 
 import { ChevronDownIcon } from "@chakra-ui/icons";
-import { Box, Button, Container, Input, Select, Text, VStack, useToast } from "@chakra-ui/react";
+import { Box, Button, Container, Input, Select, Text, useToast, VStack } from "@chakra-ui/react";
 import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { endDateAtom, minAtom, startDateAtom } from "~/store/atom";
+import { endDateAtom, minAtom, regionAtom, startDateAtom } from "~/store/atom";
+import { LeftIcon, leftIconAtom, pageTitleAtom, RightIcon, rightIconAtom } from "~/store/headerAtoms";
 import { shouldFetchScheduleAtom } from "~/store/scheduleAtom";
+import { tripRequestDummy } from "./dummy";
 
 export default function TripPage() {
   const router = useRouter();
@@ -15,6 +17,11 @@ export default function TripPage() {
   const [endDate, setEndDate] = useState("");
   const [tripStyle, setTripStyle] = useState("");
   const [isFormComplete, setIsFormComplete] = useState(false);
+
+  const [, setPageTitle] = useAtom(pageTitleAtom);
+  const [, setLeftIcon] = useAtom(leftIconAtom);
+  const [, setRightIcon] = useAtom(rightIconAtom);
+  const [region] = useAtom(regionAtom);
 
   const [, setStartDateAtom] = useAtom(startDateAtom);
   const [, setEndDateAtom] = useAtom(endDateAtom);
@@ -35,17 +42,22 @@ export default function TripPage() {
     const startDateTime = new Date(startDate);
     const endDateTime = new Date(endDate);
 
-    setStartDateAtom(
-      `${startDateTime.getFullYear()}${String(startDateTime.getMonth() + 1).padStart(2, "0")}${String(
-        startDateTime.getDate()
-      ).padStart(2, "0")}${String(startDateTime.getHours()).padStart(2, "0")}`
-    );
-    setEndDateAtom(
-      `${endDateTime.getFullYear()}${String(endDateTime.getMonth() + 1).padStart(2, "0")}${String(
-        endDateTime.getDate()
-      ).padStart(2, "0")}${String(endDateTime.getHours()).padStart(2, "0")}`
-    );
-    setMinAtom(tripStyle === "여유롭게" ? 4 : null);
+    // setStartDateAtom(
+    //   `${startDateTime.getFullYear()}${String(startDateTime.getMonth() + 1).padStart(2, "0")}${String(
+    //     startDateTime.getDate()
+    //   ).padStart(2, "0")}${String(startDateTime.getHours()).padStart(2, "0")}`
+    // );
+    // setEndDateAtom(
+    //   `${endDateTime.getFullYear()}${String(endDateTime.getMonth() + 1).padStart(2, "0")}${String(
+    //     endDateTime.getDate()
+    //   ).padStart(2, "0")}${String(endDateTime.getHours()).padStart(2, "0")}`
+    // );
+    // setMinAtom(tripStyle === "여유롭게" ? 4 : null);
+
+    // 더미데이터 이용
+    setStartDateAtom(tripRequestDummy.startDate);
+    setEndDateAtom(tripRequestDummy.endDate);
+    setMinAtom(tripRequestDummy.min);
 
     toast({
       title: "일정이 저장되었습니다.",
@@ -53,9 +65,16 @@ export default function TripPage() {
       duration: 3000,
       isClosable: true,
     });
-	setShouldFetch(true);
-	router.push("/schedule");
+    setShouldFetch(true);
+    router.push("/schedule");
   };
+
+  useEffect(() => {
+    setPageTitle(`${region} 여행`);
+    setLeftIcon(LeftIcon.back);
+    setRightIcon(RightIcon.calendar);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Box minHeight="100vh" bg="white">

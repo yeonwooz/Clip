@@ -1,14 +1,13 @@
 "use client";
 
-import { useMutation } from "@tanstack/react-query";
 import { useAtom } from "jotai";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
+import { LeftIcon, leftIconAtom, pageTitleAtom, RightIcon, rightIconAtom } from "~/store/headerAtoms";
 import { birthYearAtom, genderAtom, regionAtom } from "../../store/atom";
 import styles from "./chatPage.module.css";
-import { useRouter } from "next/navigation";
-import { pageTitleAtom, leftIconAtom, rightIconAtom, LeftIcon, RightIcon } from "~/store/headerAtoms";
-import { apiClient } from "~/api";
+import { chatResponseDummy } from "./dummy";
 
 interface Message {
   id: number;
@@ -43,19 +42,32 @@ const ChatPage: React.FC = () => {
   const [gender] = useAtom(genderAtom);
   const [, setRegion] = useAtom(regionAtom);
 
-  const sendMessageMutation = useMutation({
-    mutationFn: (messageData: { userContext: UserContext; message: string }) =>
-      apiClient.post("/initialChat", messageData),
-    onSuccess: (data) => {
-      const botMessage: Message = {
-        id: Date.now(),
-        text: data.data.message,
-        sender: "bot",
-        regions: data.data.regions ? data.data.regions.split(",").map((region: string) => region.trim()) : [],
-      };
-      setMessages((prevMessages) => [...prevMessages, botMessage]);
-    },
-  });
+  // const sendMessageMutation = useMutation({
+  //   mutationFn: (messageData: { userContext: UserContext; message: string }) =>
+  //     apiClient.post("/initialChat", messageData),
+  //   onSuccess: (data) => {
+  //     const botMessage: Message = {
+  //       id: Date.now(),
+  //       sender: "bot",
+  //       text: data.data.message,
+  //       regions: data.data.regions ? data.data.regions.split(",").map((region: string) => region.trim()) : [],
+  //     };
+  //     setMessages((prevMessages) => [...prevMessages, botMessage]);
+  //   },
+  // });
+
+  const sendMessageWithDummy = (messageData: { userContext: UserContext; message: string }) => {
+    console.log(messageData);
+    console.log(chatResponseDummy);
+
+    const botMessage: Message = {
+      id: Date.now(),
+      sender: "bot",
+      text: chatResponseDummy.message,
+      regions: chatResponseDummy.regions.split(",").map((region: string) => region.trim()),
+    };
+    setMessages((prevMessages) => [...prevMessages, botMessage]);
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -87,7 +99,7 @@ const ChatPage: React.FC = () => {
       message: text,
     };
 
-    sendMessageMutation.mutate(messageWithContext);
+    sendMessageWithDummy(messageWithContext);
     setInputMessage("");
   };
 
