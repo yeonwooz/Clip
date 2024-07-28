@@ -80,7 +80,6 @@ const SchedulePage: React.FC = () => {
                 setSchedules(JSON.parse(schedulesInLocalstorage));
             }
         }
-        console.log(22222);
         setShouldFetch(false);
     }, []);
 

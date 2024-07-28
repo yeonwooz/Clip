@@ -6,7 +6,7 @@ import localFont from 'next/font/local';
 
 export const metadata: Metadata = {
     title: 'Clip',
-    description: '네이버클라우드AI가 추천해주는 여행 추천 어플',
+    description: '네이버 클로바 AI가 추천해주는 여행 추천 어플',
 };
 
 const pretendard = localFont({
