@@ -87,7 +87,7 @@
     width: 100%;
     border-radius: 5px;
     user-select: none;
-    margin-bottom: 20px;
+    margin: 5px 0;
     text-wrap: wrap;
     height: 50px;
     overflow: hidden;

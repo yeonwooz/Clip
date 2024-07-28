@@ -129,14 +129,13 @@ const SchedulePage: React.FC = () => {
         localStorage.setItem('schedules', JSON.stringify(newSchedules));
     };
 
-    const calculateNewStartTime = (index: number) => {
-        const hours = String(index).padStart(2, '0');
-        return `${hours}0000`;
-    };
+    const calculateItemHeight = (startTime: string, endTime: string) => {
+        const startHour = parseInt(startTime.slice(0, 2), 10);
+        const endHour = parseInt(endTime.slice(0, 2), 10);
 
-    const calculateNewEndTime = (index: number) => {
-        const hours = String(index).padStart(2, '0');
-        return `${hours}0059`;
+        // 시(hour)만을 기준으로 높이를 계산 (1시간 = 60px)
+        const duration = endHour - startHour;
+        return `${duration * 58}px`;
     };
 
     const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
@@ -234,6 +233,7 @@ const SchedulePage: React.FC = () => {
                                             </div>
                                             {daySchedule.item.map((item, itemIdx) => {
                                                 const topPosition = parseInt(item.startTime.slice(0, 2)) * 60 + 'px';
+                                                const height = calculateItemHeight(item.startTime, item.endTime);
                                                 return (
                                                     <Draggable
                                                         key={`${dayIndex}-${item.title}-${item.startTime}`}
@@ -259,6 +259,7 @@ const SchedulePage: React.FC = () => {
                                                                     zIndex: snapshot.isDragging ? 1000 : 'auto',
                                                                     cursor: 'pointer',
                                                                     marginBottom: snapshot.isDragging ? '60px' : '20px', // 드래그 중일 때 공간 확보
+                                                                    height: height,
                                                                     transition: snapshot.isDragging
                                                                         ? 'none'
                                                                         : 'top 0.3s ease', // 드래그 중일 때 자연스러운 애니메이션 추가
