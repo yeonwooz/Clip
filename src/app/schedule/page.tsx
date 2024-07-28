@@ -66,16 +66,8 @@ const SchedulePage: React.FC = () => {
             if (schedulesInLocalstorage) {
                 setSchedules(JSON.parse(schedulesInLocalstorage));
             } else {
-                const newSchedules = dummy.map((schedule) => ({
-                    ...schedule,
-                    item: schedule.item.map((item) => ({
-                        ...item,
-                        startTime: item.startTime.slice(0, 2) + '0000',
-                        endTime: item.endTime.slice(0, 2) + '0059',
-                    })),
-                }));
-                setSchedules(newSchedules);
-                localStorage.setItem('schedules', JSON.stringify(newSchedules));
+                setSchedules(dummy);
+                localStorage.setItem('schedules', JSON.stringify(dummy));
             }
         }
         // shouldFetch, fetchSchedule, schedulesInStore, region, setPageTitle, setLeftIcon, setRightIcon
