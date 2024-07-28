@@ -1,7 +1,6 @@
 'use client';
 
 import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
 import { useAtom } from 'jotai';
 import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
@@ -9,6 +8,7 @@ import { birthYearAtom, genderAtom, regionAtom } from '../../store/atom';
 import styles from './chatPage.module.css';
 import { useRouter } from 'next/navigation';
 import { pageTitleAtom, leftIconAtom, rightIconAtom, LeftIcon, RightIcon } from '~/store/headerAtoms';
+import { apiClient } from '~/api';
 
 interface Message {
     id: number;
@@ -28,13 +28,6 @@ const predefinedMessages = [
     '둘이서 가기 좋은 여행지를 추천해줘',
     '가족과 함께 가기 좋은 여행지를 추천해줘',
 ];
-
-const apiClient = axios.create({
-    baseURL: 'http://118.67.130.17:8080',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-});
 
 const ChatPage: React.FC = () => {
     const router = useRouter();

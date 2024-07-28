@@ -2,7 +2,7 @@
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
 
-const apiClient = axios.create({
+export const apiClient = axios.create({
     baseURL: 'http://118.67.130.17:8080',
     headers: {
         'Content-Type': 'application/json',
