@@ -107,8 +107,11 @@ const SchedulePage: React.FC = () => {
             parseInt(movedItem.endTime.slice(0, 2), 10) - parseInt(movedItem.startTime.slice(0, 2), 10);
         const newEndHour = newStartHour + itemDuration;
 
-        const newStartTime = `${newStartHour.toString().padStart(2, '0')}0000`;
-        const newEndTime = `${newEndHour.toString().padStart(2, '0')}0059`;
+        // 4자리 문자열 포맷팅
+        const formatTo4Digit = (hour: number) => hour.toString().padStart(2, '0') + '00';
+
+        const newStartTime = formatTo4Digit(newStartHour);
+        const newEndTime = formatTo4Digit(newEndHour);
 
         // 새 날짜에 아이템 추가
         const newItem = {
