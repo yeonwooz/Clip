@@ -83,6 +83,7 @@ const SchedulePage: React.FC = () => {
     };
 
     const onDragEnd = (result: DropResult, provided: ResponderProvided) => {
+        console.log('drag');
         if (!result.destination) return;
 
         const { source, destination } = result;
@@ -93,32 +94,43 @@ const SchedulePage: React.FC = () => {
         const sourceIndex = source.index;
         const destIndex = destination.index;
 
+        // 기존 날짜와 날짜의 배열 복사
         const sourceDay = { ...schedules[sourceDayIndex] };
         const destDay = { ...schedules[destDayIndex] };
 
+        // 드래그한 아이템을 기존 날짜에서 제거
         const movedItem = sourceDay.item[sourceIndex];
+        const updatedSourceDayItems = sourceDay.item.filter((_, idx) => idx !== sourceIndex);
 
-        // 대상 위치에 다른 아이템이 있는 경우 밀어냄
-        const newItems = Array.from(destDay.item);
-        if (sourceDayIndex === destDayIndex) {
-            // 같은 날 일정에서 드래그 앤 드롭
-            newItems.splice(sourceIndex, 1);
-            newItems.splice(destIndex, 0, movedItem);
-        } else {
-            sourceDay.item.splice(sourceIndex, 1);
-            newItems.splice(destIndex, 0, movedItem);
-        }
+        // 새 날짜와 시간 슬롯 계산
+        const newStartHour = parseInt(getTimeSlots()[destination.index].slice(0, 2), 10);
+        const itemDuration =
+            parseInt(movedItem.endTime.slice(0, 2), 10) - parseInt(movedItem.startTime.slice(0, 2), 10);
+        const newEndHour = newStartHour + itemDuration;
 
+        const newStartTime = `${newStartHour.toString().padStart(2, '0')}0000`;
+        const newEndTime = `${newEndHour.toString().padStart(2, '0')}0059`;
+
+        // 새 날짜에 아이템 추가
+        const newItem = {
+            ...movedItem,
+            startTime: newStartTime,
+            endTime: newEndTime,
+        };
+        const updatedDestDayItems = Array.from(destDay.item);
+        updatedDestDayItems.splice(destIndex, 0, newItem);
+
+        // 스케줄 업데이트
         const newSchedules = schedules.map((schedule, idx) => {
             if (idx === sourceDayIndex) {
                 return {
                     ...schedule,
-                    item: sourceDay.item,
+                    item: updatedSourceDayItems,
                 };
             } else if (idx === destDayIndex) {
                 return {
                     ...schedule,
-                    item: newItems,
+                    item: updatedDestDayItems,
                 };
             } else {
                 return schedule;
@@ -126,6 +138,7 @@ const SchedulePage: React.FC = () => {
         });
 
         setSchedules(newSchedules);
+        console.log(newSchedules);
         localStorage.setItem('schedules', JSON.stringify(newSchedules));
     };
 
