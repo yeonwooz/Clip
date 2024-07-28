@@ -26,18 +26,12 @@ const ScheduleDetailPage: React.FC = () => {
     const [dateInfo, setDateInfo] = useState({
         minDate: '',
         maxDate: '',
-        date: '',
+        startTime: '',
+        endTime: '',
     });
 
     const [start, setStart] = useState('');
     const [end, setEnd] = useState('');
-
-    // 시작 시간 기준으로 2시간 뒤를 계산하는 함수
-    function getEndDateFromStartDate(startDateTime: string): string {
-        const startDate = new Date(startDateTime);
-        const endDate = new Date(startDate.getTime() + 11 * 60 * 60 * 1000); // 11시간 더하기 -> TODO: 애초에 utc 기준으로 계산해서 들고 오도록 수정
-        return endDate.toISOString().slice(0, 16);
-    }
 
     useEffect(() => {
         setLeftIcon(LeftIcon.back);
@@ -52,20 +46,28 @@ const ScheduleDetailPage: React.FC = () => {
 
         const minDateInLocalStorage = localStorage.getItem('minDate');
         const maxDateInLocalStorage = localStorage.getItem('maxDate');
-        const scheduleDateInLocalStorage = localStorage.getItem('scheduleDate');
+        const scheduleDetailStartTimeInLocalStorage = localStorage.getItem('scheduleDetailStartTime');
+        const scheduleDetailEndTimeInLocalStorage = localStorage.getItem('scheduleDetailEndTime');
 
-        if (minDateInLocalStorage && maxDateInLocalStorage && scheduleDateInLocalStorage) {
+        if (
+            minDateInLocalStorage &&
+            maxDateInLocalStorage &&
+            scheduleDetailStartTimeInLocalStorage &&
+            scheduleDetailEndTimeInLocalStorage
+        ) {
             const minDate = new Date(minDateInLocalStorage).toISOString().split('T')[0];
             const maxDate = new Date(maxDateInLocalStorage).toISOString().split('T')[0];
-            const date = new Date(scheduleDateInLocalStorage).toISOString().slice(0, 16);
+            const startTime = new Date(scheduleDetailStartTimeInLocalStorage).toISOString().slice(0, 16);
+            const endTime = new Date(scheduleDetailEndTimeInLocalStorage).toISOString().slice(0, 16);
+
             setDateInfo({
                 minDate,
                 maxDate,
-                date,
+                startTime,
+                endTime,
             });
-            setStart(date);
-            const formattedEndDate = getEndDateFromStartDate(date);
-            setEnd(formattedEndDate);
+            setStart(startTime);
+            setEnd(endTime);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -73,12 +75,18 @@ const ScheduleDetailPage: React.FC = () => {
     function handleStartDate(event: React.ChangeEvent<HTMLInputElement>) {
         const startDateTime = event.target.value;
         setStart(startDateTime);
-        const formattedEndDate = getEndDateFromStartDate(startDateTime);
-        setEnd(formattedEndDate);
         setScheduleDetail((prevDetail) => ({
             ...prevDetail,
             startTime: startDateTime,
-            endTime: formattedEndDate,
+        }));
+    }
+
+    function handleEndDate(event: React.ChangeEvent<HTMLInputElement>) {
+        const endDateTime = event.target.value;
+        setEnd(endDateTime);
+        setScheduleDetail((prevDetail) => ({
+            ...prevDetail,
+            endTime: endDateTime,
         }));
     }
 
@@ -175,7 +183,15 @@ const ScheduleDetailPage: React.FC = () => {
                         min={dateInfo.minDate}
                         max={dateInfo.maxDate}
                     />
-                    <Input placeholder='일정 종료' height={14} type='datetime-local' readOnly value={end} />
+                    <Input
+                        placeholder='일정 종료'
+                        height={14}
+                        type='datetime-local'
+                        value={end}
+                        onChange={handleEndDate}
+                        min={dateInfo.minDate}
+                        max={dateInfo.maxDate}
+                    />
                 </div>
                 <div className={styles.descriptionTitle}>
                     <span>여행지 정보</span>

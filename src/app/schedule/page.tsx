@@ -205,10 +205,11 @@ const SchedulePage: React.FC = () => {
         const lastDate = schedules[daysLength];
         saveDateToLocalStorage(firstDate.date, firstDate.item[0].startTime, 'minDate');
         saveDateToLocalStorage(lastDate.date, lastDate.item[lastDate.item.length - 1].startTime, 'maxDate');
-        saveDateToLocalStorage(date, item.startTime, 'scheduleDate');
+        saveDateToLocalStorage(date, item.startTime, 'scheduleDetailStartTime');
+        saveDateToLocalStorage(date, item.endTime, 'scheduleDetailEndTime');
 
         localStorage.setItem('scheduleDetail', JSON.stringify(item));
-        router.push(`/scheduleDetail?${item.title}-${item.startTime}`);
+        router.push(`/scheduleDetail?${item.title}`);
     };
 
     const handleMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
