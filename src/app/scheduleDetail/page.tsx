@@ -69,7 +69,6 @@ const ScheduleDetailPage: React.FC = () => {
             setStart(startTime);
             setEnd(endTime);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     function handleStartDate(event: React.ChangeEvent<HTMLInputElement>) {

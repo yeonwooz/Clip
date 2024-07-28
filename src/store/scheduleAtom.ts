@@ -14,7 +14,7 @@ export interface Schedule {
     item: ScheduleItem[];
 }
 
-export const shouldFetchSchedule = atom<boolean>(false);
+export const shouldFetchScheduleAtom = atom<boolean>(false);
 export const schedulesAtom = atom<Schedule[]>([]);
 export const scheduleLoadingAtom = atom<boolean>(false);
 export const scheduleErrorAtom = atom<any | null>(null);

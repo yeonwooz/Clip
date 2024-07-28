@@ -3,10 +3,13 @@
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { Box, Button, Container, Input, Select, Text, VStack, useToast } from "@chakra-ui/react";
 import { useAtom } from "jotai";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { endDateAtom, minAtom, startDateAtom } from "~/store/atom";
+import { shouldFetchScheduleAtom } from "~/store/scheduleAtom";
 
 export default function TripPage() {
+  const router = useRouter();
   const [tripName, setTripName] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -16,6 +19,7 @@ export default function TripPage() {
   const [, setStartDateAtom] = useAtom(startDateAtom);
   const [, setEndDateAtom] = useAtom(endDateAtom);
   const [, setMinAtom] = useAtom(minAtom);
+  const [, setShouldFetch] = useAtom(shouldFetchScheduleAtom);
 
   const toast = useToast();
 
@@ -49,6 +53,8 @@ export default function TripPage() {
       duration: 3000,
       isClosable: true,
     });
+	setShouldFetch(true);
+	router.push("/schedule");
   };
 
   return (

@@ -7,7 +7,7 @@ import {
     scheduleErrorAtom,
     Schedule,
     ScheduleItem,
-    shouldFetchSchedule,
+    shouldFetchScheduleAtom,
     schedulesAtom,
 } from '../../store/scheduleAtom';
 import { useFetchSchedule } from '../../store/scheduleActions';
@@ -18,61 +18,71 @@ import LoadingSchedule from './loading';
 import { dummy } from './dummy';
 import { useRouter } from 'next/navigation';
 import { pageTitleAtom, leftIconAtom, rightIconAtom, RightIcon } from '~/store/headerAtoms';
-import { regionAtom } from '~/store/atom';
+import { endDateAtom, minAtom, regionAtom, startDateAtom } from '~/store/atom';
 
 const SchedulePage: React.FC = () => {
     const router = useRouter();
-    const fetchSchedule = useFetchSchedule();
 
-    const [shouldFetch] = useAtom(shouldFetchSchedule);
-    const [loading] = useAtom(scheduleLoadingAtom);
+    const [shouldFetch, setShouldFetch] = useAtom(shouldFetchScheduleAtom);
+    const [loading, setLoading] = useAtom(scheduleLoadingAtom);
     const [error] = useAtom(scheduleErrorAtom);
     const [schedulesInStore] = useAtom(schedulesAtom);
-    const [pageTitle, setPageTitle] = useAtom(pageTitleAtom);
-    const [leftIcon, setLeftIcon] = useAtom(leftIconAtom);
-    const [rightIcon, setRightIcon] = useAtom(rightIconAtom);
+    const [, setPageTitle] = useAtom(pageTitleAtom);
+    const [, setLeftIcon] = useAtom(leftIconAtom);
+    const [, setRightIcon] = useAtom(rightIconAtom);
     const [region] = useAtom(regionAtom);
+    const [startDate] = useAtom(startDateAtom);
+    const [endDate] = useAtom(endDateAtom);
+    const [min] = useAtom(minAtom);
 
     const [schedules, setSchedules] = useState<Schedule[]>([]);
+
+    const fetchSchedule = useFetchSchedule();
 
     useEffect(() => {
         setPageTitle(`${region} 여행`);
         setLeftIcon(null);
         setRightIcon(RightIcon.write);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
 
-    useEffect(() => {
         if (shouldFetch) {
-            fetchSchedule({
-                region: '부산',
-                startDate: '2024080210', // YYYYMMDDHH
-                endDate: '2024080310',
-                min: 4, // 하루 최소 일정 갯수
-            });
+            setLoading(true);
+            setTimeout(() => {
+                setLoading(false);
+            }, 3000);
 
-            const newSchedules = schedulesInStore.map((schedule) => ({
-                ...schedule,
-                item: schedule.item.map((item) => ({
-                    ...item,
-                    startTime: item.startTime.slice(0, 2) + '0000',
-                    endTime: item.endTime.slice(0, 2) + '0059',
-                })),
-            }));
-            setSchedules(newSchedules);
-            localStorage.setItem('schedules', JSON.stringify(newSchedules));
+            setSchedules(dummy);
+            localStorage.setItem('schedules', JSON.stringify(dummy));
+
+            // TODO: SSL 인증서 발급 후 연결 활성화
+            // if (!region || !startDate || !endDate || !min) {
+            // 	return;
+            // }
+            // fetchSchedule({
+            //     region,
+            //     startDate,
+            //     endDate,
+            //     min,
+            // });
+
+            // const newSchedules = schedulesInStore.map((schedule) => ({
+            //     ...schedule,
+            //     item: schedule.item.map((item) => ({
+            //         ...item,
+            //         startTime: item.startTime.slice(0, 2) + '0000',
+            //         endTime: item.endTime.slice(0, 2) + '0059',
+            //     })),
+            // }));
+            // setSchedules(newSchedules);
+            // localStorage.setItem('schedules', JSON.stringify(newSchedules));
         } else {
             const schedulesInLocalstorage = localStorage.getItem('schedules');
             if (schedulesInLocalstorage) {
                 setSchedules(JSON.parse(schedulesInLocalstorage));
-            } else {
-                setSchedules(dummy);
-                localStorage.setItem('schedules', JSON.stringify(dummy));
             }
         }
-        // shouldFetch, fetchSchedule, schedulesInStore, region, setPageTitle, setLeftIcon, setRightIcon
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [shouldFetch, schedulesInStore]);
+        console.log(22222);
+        setShouldFetch(false);
+    }, []);
 
     const getTimeSlots = () => {
         const timeSlots = [];
