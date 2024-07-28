@@ -83,7 +83,6 @@ const SchedulePage: React.FC = () => {
     };
 
     const onDragEnd = (result: DropResult, provided: ResponderProvided) => {
-        console.log('drag');
         if (!result.destination) return;
 
         const { source, destination } = result;
@@ -325,7 +324,12 @@ const SchedulePage: React.FC = () => {
                     취소
                 </Button>
                 <span className={styles.buttonGap} />
-                <Button type='ok' onClick={() => console.log('저장 버튼 클릭됨')}>
+                <Button
+                    type='ok'
+                    onClick={() => {
+                        localStorage.setItem('schedules', JSON.stringify(schedules));
+                    }}
+                >
                     저장
                 </Button>
             </div>

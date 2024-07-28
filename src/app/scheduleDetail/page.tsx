@@ -135,7 +135,6 @@ const ScheduleDetailPage: React.FC = () => {
 
         const currentSchedules = JSON.parse(schedulesInLocalStorage);
         const startDate = start.split('T')[0].split('-').join('');
-        console.log(startDate);
 
         const formattedStartTime = getFormattedTime(start);
         const formattedEndTime = getFormattedTime(end);
