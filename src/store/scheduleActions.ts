@@ -7,7 +7,7 @@ export interface Param {
     region: string;
     startDate: string;
     endDate: string;
-    min: number;
+    min: number | null;
 }
 
 export const useFetchSchedule = () => {
